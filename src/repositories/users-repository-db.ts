@@ -1,6 +1,7 @@
 import {usersCollection} from "./db";
 import {userDbType, userModel} from "../models/models";
 import {ObjectId} from "mongodb";
+import {usersService} from "../domain/users-service";
 
 export const usersRepository = {
     async createUser(newDbUser: userDbType): Promise<userModel> {
@@ -25,5 +26,9 @@ export const usersRepository = {
         return result.deletedCount === 1
 
     },
+    async findUserById(userId: Object): Promise<userDbType | null> {
+        let user = await usersCollection.findOne({_id: userId})
+        return user
+    }
 
 }

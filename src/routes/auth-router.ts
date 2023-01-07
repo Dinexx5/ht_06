@@ -7,6 +7,7 @@ import {
     loginOrEmailValidation,
     passwordAuthValidation,
 } from "../middlewares/input-validation";
+import {jwtService} from "../application/jwt-service";
 
 
 export const authRouter = Router({})
@@ -18,9 +19,10 @@ authRouter.post('/login',
     passwordAuthValidation,
     inputValidationMiddleware,
     async(req: RequestWithBody<authInputModel>, res: Response) => {
-        const checkResult = await usersService.checkCredentials(req.body)
-        if (checkResult) {
-            res.send(204)
+        const user = await usersService.checkCredentials(req.body)
+        if (user) {
+            const token = await jwtService.createJWT(user)
+            res.status(201).send(token)
             return
         }
         res.send (401)

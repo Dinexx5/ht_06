@@ -1,7 +1,7 @@
-import {Response, Router} from "express"
+import {Request, Response, Router} from "express"
 
 import {
-    basicAuthorisation, blogIdlValidation, contentValidation,
+    basicAuthorisation, bearerAuthMiddleware, blogIdlValidation, commentValidation, contentValidation,
     inputValidationMiddleware, objectIdIsValid,
     shortDescriptionValidation, titleValidation
 } from "../middlewares/input-validation";
@@ -10,15 +10,20 @@ import {postsService} from "../domain/posts-service";
 
 import {
     RequestWithBody, RequestWithParams,
-    RequestWithParamsAndBody, RequestWithQuery
+    RequestWithParamsAndBody, RequestWithParamsAndQuery, RequestWithQuery
 } from "../repositories/types";
 
 import {postsQueryRepository} from "../repositories/posts-query-repository";
 
 import {
-    createPostInputModel, getAllPostsQueryModel, paramsIdModel,
+    blogType, commentsViewModel, commentViewModel,
+    createCommentModel,
+    createPostInputModel, getAllCommentsQueryModel, getAllPostsQueryModel, paramsIdModel,
     postsViewModel, postType, updatePostInputModel
 } from "../models/models";
+import {commentsService} from "../domain/comments-service";
+import {blogsQueryRepository} from "../repositories/blogs-query-repository";
+import {commentsQueryRepository} from "../repositories/comments/comments-query-repository";
 
 
 export const postsRouter = Router({})
@@ -87,4 +92,30 @@ postsRouter.put('/:id',
             res.send(404)
 
         }
+    })
+
+postsRouter.post('/:id/comments',
+    bearerAuthMiddleware,
+    commentValidation,
+    async (req:RequestWithParamsAndBody<paramsIdModel, createCommentModel>, res:Response) => {
+        const post: postType | null = await postsQueryRepository.getPostById(req.params.id)
+        if (!post) {
+            res.send(404)
+            return
+        }
+        const newComment: commentViewModel | null = await commentsService.createComment(req.body.content, req.user!._id)
+        res.status(201).send(newComment)
+    })
+
+postsRouter.get('/:id/comments',
+    bearerAuthMiddleware,
+    commentValidation,
+    async (req: RequestWithParamsAndQuery<paramsIdModel, getAllCommentsQueryModel>, res: Response) => {
+        const post: postType | null = await postsQueryRepository.getPostById(req.params.id)
+        if (!post) {
+            res.send(404)
+            return
+        }
+        const returnedComments: commentsViewModel = await commentsQueryRepository.getAllComments(req.query)
+        res.status(201).send(returnedComments)
     })

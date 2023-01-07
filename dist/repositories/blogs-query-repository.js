@@ -37,7 +37,7 @@ exports.blogsQueryRepository = {
                     .toArray();
                 const blogsView = blogsDb.map(blogsMapperToBlogType);
                 return {
-                    pagesCount: Math.ceil(countAllWithSearchTerm / pageSize),
+                    pagesCount: Math.ceil(countAllWithSearchTerm / +pageSize),
                     page: +pageNumber,
                     pageSize: +pageSize,
                     totalCount: countAllWithSearchTerm,
@@ -53,7 +53,7 @@ exports.blogsQueryRepository = {
                 .toArray();
             const blogsView = blogsDb.map(blogsMapperToBlogType);
             return {
-                pagesCount: Math.ceil(countAll / pageSize),
+                pagesCount: Math.ceil(countAll / +pageSize),
                 page: +pageNumber,
                 pageSize: +pageSize,
                 totalCount: countAll,

@@ -26,10 +26,11 @@ export const blogsRouter = Router({})
 
 
 blogsRouter.get('/',
+    basicAuthorisation,
     async (req: RequestWithQuery<getAllBlogsQueryModel>, res: Response<blogsViewModel>) => {
 
 
-    const returnedBlogs: blogsViewModel= await blogsQueryRepository.getAllBlogs(req.query)
+    const returnedBlogs: blogsViewModel = await blogsQueryRepository.getAllBlogs(req.query)
 
     res.status(200).send(returnedBlogs)
 })

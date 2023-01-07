@@ -3,6 +3,8 @@ import {body, validationResult} from "express-validator";
 import {blogsQueryRepository} from "../repositories/blogs-query-repository";
 import {blogType} from "../models/models";
 import {ObjectId} from "mongodb";
+import {jwtService} from "../application/jwt-service";
+import {usersService} from "../domain/users-service";
 
 export const basicAuthorisation = (req: Request, res: Response, next: NextFunction) => {
     const loginPass = req.headers.authorization;
@@ -41,6 +43,20 @@ export const objectIdIsValid = (req: Request, res: Response, next: NextFunction)
     }
 }
 
+export const bearerAuthMiddleware = async (req:Request, res:Response, next: NextFunction) => {
+    if (!req.headers.authorization) {
+        res.send(401)
+        return
+    }
+    const token = req.headers.authorization.split(' ')[1]
+    const userId = await jwtService.getUserIdByToken(token)
+    if (userId) {
+        req.user = await usersService.findUserById(userId)
+        next ()
+    }
+    res.send(401)
+}
+
 
 //blogs validation
 export const nameValidation = body('name').trim().isLength({max: 15}).withMessage('Incorrect length').not().isEmpty().withMessage('Not a string')
@@ -71,4 +87,7 @@ export const emailValidation = body('email').trim().isEmail().withMessage('Not a
 
 export const loginOrEmailValidation = body('loginOrEmail').trim().not().isEmpty().withMessage('Not a string')
 export const passwordAuthValidation = body('password').trim().not().isEmpty().withMessage('Not a string')
+
+//comments validation
+export const commentValidation = body('content').trim().isLength({min: 20, max: 300}).withMessage('Incorrect length').not().isEmpty().withMessage('Not a string')
 

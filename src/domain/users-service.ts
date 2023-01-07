@@ -20,17 +20,17 @@ export const usersService = {
         return await usersRepository.createUser(newDbUser)
     },
 
-    async checkCredentials(body: authInputModel): Promise<boolean> {
+    async checkCredentials(body: authInputModel): Promise<userDbType | null> {
         const {loginOrEmail, password} = body
         const user = await usersRepository.findByLoginOrEmail(loginOrEmail)
         if (!user) {
-            return false
+            return null
         }
         const passwordHash = await this._generateHash(password, user.passwordSalt)
         if (user.passwordHash !== passwordHash) {
-            return false
+            return null
         }
-        return true
+        return user
 
 
     },
@@ -43,5 +43,9 @@ export const usersService = {
     async deleteUserById(id:string): Promise<boolean> {
         return await usersRepository.deleteUserById(id)
 
+    },
+
+    async findUserById(userId: Object): Promise<userDbType | null> {
+        return await usersRepository.findUserById(userId)
     }
 }

@@ -13,11 +13,13 @@ exports.authRouter = void 0;
 const express_1 = require("express");
 const users_service_1 = require("../domain/users-service");
 const input_validation_1 = require("../middlewares/input-validation");
+const jwt_service_1 = require("../application/jwt-service");
 exports.authRouter = (0, express_1.Router)({});
 exports.authRouter.post('/login', input_validation_1.loginOrEmailValidation, input_validation_1.passwordAuthValidation, input_validation_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const checkResult = yield users_service_1.usersService.checkCredentials(req.body);
-    if (checkResult) {
-        res.send(204);
+    const user = yield users_service_1.usersService.checkCredentials(req.body);
+    if (user) {
+        const token = yield jwt_service_1.jwtService.createJWT(user);
+        res.status(201).send(token);
         return;
     }
     res.send(401);

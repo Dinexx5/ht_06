@@ -14,6 +14,8 @@ const express_1 = require("express");
 const input_validation_1 = require("../middlewares/input-validation");
 const posts_service_1 = require("../domain/posts-service");
 const posts_query_repository_1 = require("../repositories/posts-query-repository");
+const comments_service_1 = require("../domain/comments-service");
+const comments_query_repository_1 = require("../repositories/comments/comments-query-repository");
 exports.postsRouter = (0, express_1.Router)({});
 exports.postsRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const returnedPosts = yield posts_query_repository_1.postsQueryRepository.getAllPosts(req.query);
@@ -49,4 +51,22 @@ exports.postsRouter.put('/:id', input_validation_1.basicAuthorisation, input_val
     else {
         res.send(404);
     }
+}));
+exports.postsRouter.post('/:id/comments', input_validation_1.bearerAuthMiddleware, input_validation_1.commentValidation, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const post = yield posts_query_repository_1.postsQueryRepository.getPostById(req.params.id);
+    if (!post) {
+        res.send(404);
+        return;
+    }
+    const newComment = yield comments_service_1.commentsService.createComment(req.body.content, req.user._id);
+    res.status(201).send(newComment);
+}));
+exports.postsRouter.get('/:id/comments', input_validation_1.bearerAuthMiddleware, input_validation_1.commentValidation, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const post = yield posts_query_repository_1.postsQueryRepository.getPostById(req.params.id);
+    if (!post) {
+        res.send(404);
+        return;
+    }
+    const returnedComments = yield comments_query_repository_1.commentsQueryRepository.getAllComments(req.query);
+    res.status(201).send(returnedComments);
 }));

@@ -9,17 +9,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.passwordAuthValidation = exports.loginOrEmailValidation = exports.emailValidation = exports.passwordValidation = exports.loginValidation = exports.blogIdlValidation = exports.contentValidation = exports.shortDescriptionValidation = exports.titleValidation = exports.websiteUrlValidation = exports.descriptionValidation = exports.nameValidation = exports.objectIdIsValid = exports.inputValidationMiddleware = exports.basicAuthorisation = void 0;
+exports.commentValidation = exports.passwordAuthValidation = exports.loginOrEmailValidation = exports.emailValidation = exports.passwordValidation = exports.loginValidation = exports.blogIdlValidation = exports.contentValidation = exports.shortDescriptionValidation = exports.titleValidation = exports.websiteUrlValidation = exports.descriptionValidation = exports.nameValidation = exports.bearerAuthMiddleware = exports.objectIdIsValid = exports.inputValidationMiddleware = exports.basicAuthorisation = void 0;
 const express_validator_1 = require("express-validator");
 const blogs_query_repository_1 = require("../repositories/blogs-query-repository");
 const mongodb_1 = require("mongodb");
+const jwt_service_1 = require("../application/jwt-service");
+const users_service_1 = require("../domain/users-service");
 const basicAuthorisation = (req, res, next) => {
     const loginPass = req.headers.authorization;
     if (loginPass === "Basic YWRtaW46cXdlcnR5") {
         next();
     }
     else {
-        return res.status(401).end();
+        return res.status(401).send("access forbidden");
     }
 };
 exports.basicAuthorisation = basicAuthorisation;
@@ -51,6 +53,20 @@ const objectIdIsValid = (req, res, next) => {
     }
 };
 exports.objectIdIsValid = objectIdIsValid;
+const bearerAuthMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!req.headers.authorization) {
+        res.send(401);
+        return;
+    }
+    const token = req.headers.authorization.split(' ')[1];
+    const userId = yield jwt_service_1.jwtService.getUserIdByToken(token);
+    if (userId) {
+        req.user = yield users_service_1.usersService.findUserById(userId);
+        next();
+    }
+    res.send(401);
+});
+exports.bearerAuthMiddleware = bearerAuthMiddleware;
 //blogs validation
 exports.nameValidation = (0, express_validator_1.body)('name').trim().isLength({ max: 15 }).withMessage('Incorrect length').not().isEmpty().withMessage('Not a string');
 exports.descriptionValidation = (0, express_validator_1.body)('description').trim().isLength({ max: 500 }).withMessage('Incorrect length').not().isEmpty().withMessage('Not a string');
@@ -74,3 +90,5 @@ exports.emailValidation = (0, express_validator_1.body)('email').trim().isEmail(
 //auth validation
 exports.loginOrEmailValidation = (0, express_validator_1.body)('loginOrEmail').trim().not().isEmpty().withMessage('Not a string');
 exports.passwordAuthValidation = (0, express_validator_1.body)('password').trim().not().isEmpty().withMessage('Not a string');
+//comments validation
+exports.commentValidation = (0, express_validator_1.body)('content').trim().isLength({ min: 20, max: 300 }).withMessage('Incorrect length').not().isEmpty().withMessage('Not a string');

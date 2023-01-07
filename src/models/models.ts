@@ -7,8 +7,8 @@ export type getPostsForSpecifiedBlogModel = {
 export type getAllBlogsQueryModel = {
     sortBy: string
     sortDirection: string
-    pageNumber: number
-    pageSize: number
+    pageNumber: string
+    pageSize: string
     searchNameTerm: string
 }
 export type createPostForSpecifiedBlogInputModel = {
@@ -48,8 +48,8 @@ export type updatePostInputModel = {
 export type QueryBlogs = {
     sortDirection: string
     sortBy: string
-    pageNumber: number
-    pageSize: number
+    pageNumber: string
+    pageSize: string
     searchNameTerm: string | null
 }
 
@@ -164,4 +164,44 @@ export type userDbType = {
 export type authInputModel = {
     loginOrEmail: string
     password: string
+}
+export type createCommentModel = {
+    content: string
+}
+
+export type commentViewModel = {
+    id: string
+    content: string
+    userId: string
+    userLogin: string
+    createdAt: string
+}
+export type commentDbType = {
+    _id: Object
+    content: string
+    createdAt: string
+    userId: string,
+    userLogin: string
+}
+
+export type getAllCommentsQueryModel = {
+    sortBy: string
+    sortDirection: string
+    pageNumber: string
+    pageSize: string
+}
+
+export type commentType = {
+    id: string
+    content: string
+    createdAt: string
+    userId: string
+    userLogin: string
+}
+export type commentsViewModel = {
+    pagesCount: number
+    page: number
+    pageSize: number
+    totalCount: number
+    items: commentType []
 }

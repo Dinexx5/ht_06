@@ -38,13 +38,13 @@ exports.usersService = {
             const { loginOrEmail, password } = body;
             const user = yield users_repository_db_1.usersRepository.findByLoginOrEmail(loginOrEmail);
             if (!user) {
-                return false;
+                return null;
             }
             const passwordHash = yield this._generateHash(password, user.passwordSalt);
             if (user.passwordHash !== passwordHash) {
-                return false;
+                return null;
             }
-            return true;
+            return user;
         });
     },
     _generateHash(password, salt) {
@@ -56,6 +56,11 @@ exports.usersService = {
     deleteUserById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield users_repository_db_1.usersRepository.deleteUserById(id);
+        });
+    },
+    findUserById(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield users_repository_db_1.usersRepository.findUserById(userId);
         });
     }
 };
