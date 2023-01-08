@@ -42,6 +42,15 @@ exports.commentsRouter.put('/:id', input_validation_1.bearerAuthMiddleware, inpu
     }
 }));
 exports.commentsRouter.delete('/:id', input_validation_1.bearerAuthMiddleware, input_validation_1.objectIdIsValid, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const comment = yield comments_query_repository_1.commentsQueryRepository.getCommentById(req.params.id);
+    if (!comment) {
+        res.send(404);
+        return;
+    }
+    if (comment.userId !== req.user._id.toString()) {
+        res.send(403);
+        return;
+    }
     const isDeleted = yield comments_service_1.commentsService.deleteCommentById(req.params.id);
     if (isDeleted) {
         res.send(204);

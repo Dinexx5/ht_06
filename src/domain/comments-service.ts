@@ -4,8 +4,8 @@ import {commentsRepository} from "../repositories/comments/comments-repository";
 
 
 export const commentsService = {
-    async createComment (content: string, user: userDbType) {
-        return await commentsRepository.createComment(content, user)
+    async createComment (content: string, user: userDbType, postId: string) {
+        return await commentsRepository.createComment(content, user, postId)
     },
 
     async updateCommentById (id: string, content: string) {

@@ -58,7 +58,7 @@ exports.postsRouter.post('/:id/comments', input_validation_1.bearerAuthMiddlewar
         res.sendStatus(404);
         return;
     }
-    const newComment = yield comments_service_1.commentsService.createComment(req.body.content, req.user);
+    const newComment = yield comments_service_1.commentsService.createComment(req.body.content, req.user, req.params.id);
     return res.status(201).send(newComment);
 }));
 exports.postsRouter.get('/:id/comments', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -67,6 +67,6 @@ exports.postsRouter.get('/:id/comments', (req, res) => __awaiter(void 0, void 0,
         res.send(404);
         return;
     }
-    const returnedComments = yield comments_query_repository_1.commentsQueryRepository.getAllComments(req.query);
+    const returnedComments = yield comments_query_repository_1.commentsQueryRepository.getAllCommentsForPost(req.query, req.params.id);
     res.status(200).send(returnedComments);
 }));

@@ -180,8 +180,9 @@ export type commentDbType = {
     _id: Object
     content: string
     createdAt: string
-    userId: string,
+    userId: string
     userLogin: string
+    postId: string
 }
 
 export type getAllCommentsQueryModel = {

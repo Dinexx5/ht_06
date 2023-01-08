@@ -103,7 +103,7 @@ postsRouter.post('/:id/comments',
             res.sendStatus(404)
             return
         }
-        const newComment: commentViewModel = await commentsService.createComment(req.body.content, req.user!)
+        const newComment: commentViewModel = await commentsService.createComment(req.body.content, req.user!, req.params.id)
         return res.status(201).send(newComment)
 
     })
@@ -115,6 +115,6 @@ postsRouter.get('/:id/comments',
             res.send(404)
             return
         }
-        const returnedComments: commentsViewModel = await commentsQueryRepository.getAllComments(req.query)
+        const returnedComments: commentsViewModel = await commentsQueryRepository.getAllCommentsForPost(req.query, req.params.id)
         res.status(200).send(returnedComments)
     })

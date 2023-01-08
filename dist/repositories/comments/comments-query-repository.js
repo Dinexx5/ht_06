@@ -22,12 +22,12 @@ function commentsMapperToCommentType(comment) {
     };
 }
 exports.commentsQueryRepository = {
-    getAllComments(query) {
+    getAllCommentsForPost(query, postId) {
         return __awaiter(this, void 0, void 0, function* () {
             const { sortDirection = "desc", sortBy = "createdAt", pageNumber = 1, pageSize = 10 } = query;
             const sortDirectionNumber = sortDirection === "desc" ? -1 : 1;
             const skippedCommentsNumber = (+pageNumber - 1) * +pageSize;
-            const countAll = yield db_1.commentsCollection.countDocuments();
+            const countAll = yield db_1.commentsCollection.countDocuments({ postId: postId });
             let commentsDb = yield db_1.commentsCollection
                 .find({})
                 .sort({ [sortBy]: sortDirectionNumber })

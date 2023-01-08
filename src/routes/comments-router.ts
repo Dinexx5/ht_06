@@ -70,6 +70,17 @@ commentsRouter.delete('/:id',
     objectIdIsValid,
     async (req: RequestWithParams<paramsIdModel>, res: Response) => {
 
+        const comment: commentViewModel | null = await commentsQueryRepository.getCommentById(req.params.id)
+
+        if (!comment) {
+            res.send(404)
+            return
+        }
+        if (comment.userId !== req.user!._id.toString()) {
+            res.send(403)
+            return
+        }
+
         const isDeleted: boolean = await commentsService.deleteCommentById(req.params.id)
         if (isDeleted) {
             res.send(204)
