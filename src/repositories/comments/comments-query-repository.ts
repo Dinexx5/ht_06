@@ -8,11 +8,11 @@ import {ObjectId} from "mongodb";
 
 function commentsMapperToCommentType (comment: commentDbType): commentType {
     return  {
+        id: comment._id.toString(),
+        content: comment.content,
         userId: comment.userId,
         userLogin: comment.userLogin,
-        content: comment.content,
         createdAt: comment.createdAt,
-        id: comment._id.toString()
     }
 
 }

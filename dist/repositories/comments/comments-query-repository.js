@@ -14,11 +14,11 @@ const db_1 = require("../db");
 const mongodb_1 = require("mongodb");
 function commentsMapperToCommentType(comment) {
     return {
+        id: comment._id.toString(),
+        content: comment.content,
         userId: comment.userId,
         userLogin: comment.userLogin,
-        content: comment.content,
         createdAt: comment.createdAt,
-        id: comment._id.toString()
     };
 }
 exports.commentsQueryRepository = {
