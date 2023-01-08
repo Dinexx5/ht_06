@@ -52,21 +52,21 @@ exports.postsRouter.put('/:id', input_validation_1.basicAuthorisation, input_val
         res.send(404);
     }
 }));
-exports.postsRouter.post('/:id/comments', input_validation_1.bearerAuthMiddleware, input_validation_1.commentValidation, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.postsRouter.post('/:id/comments', input_validation_1.bearerAuthMiddleware, input_validation_1.commentValidation, input_validation_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const post = yield posts_query_repository_1.postsQueryRepository.getPostById(req.params.id);
     if (!post) {
-        res.send(404);
+        res.sendStatus(404);
         return;
     }
-    const newComment = yield comments_service_1.commentsService.createComment(req.body.content, req.user._id);
-    res.status(201).send(newComment);
+    const newComment = yield comments_service_1.commentsService.createComment(req.body.content, req.user);
+    return res.status(201).send(newComment);
 }));
-exports.postsRouter.get('/:id/comments', input_validation_1.bearerAuthMiddleware, input_validation_1.commentValidation, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.postsRouter.get('/:id/comments', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const post = yield posts_query_repository_1.postsQueryRepository.getPostById(req.params.id);
     if (!post) {
         res.send(404);
         return;
     }
     const returnedComments = yield comments_query_repository_1.commentsQueryRepository.getAllComments(req.query);
-    res.status(201).send(returnedComments);
+    res.status(200).send(returnedComments);
 }));

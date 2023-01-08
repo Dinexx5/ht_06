@@ -1,4 +1,4 @@
-import {Request, Response, Router} from "express"
+import {Response, Router} from "express"
 
 import {
     basicAuthorisation, bearerAuthMiddleware, blogIdlValidation, commentValidation, contentValidation,
@@ -16,14 +16,14 @@ import {
 import {postsQueryRepository} from "../repositories/posts-query-repository";
 
 import {
-    blogType, commentsViewModel, commentViewModel,
+    commentsViewModel, commentViewModel,
     createCommentModel,
     createPostInputModel, getAllCommentsQueryModel, getAllPostsQueryModel, paramsIdModel,
     postsViewModel, postType, updatePostInputModel
 } from "../models/models";
 import {commentsService} from "../domain/comments-service";
-import {blogsQueryRepository} from "../repositories/blogs-query-repository";
 import {commentsQueryRepository} from "../repositories/comments/comments-query-repository";
+import {debug} from "util";
 
 
 export const postsRouter = Router({})
@@ -97,19 +97,19 @@ postsRouter.put('/:id',
 postsRouter.post('/:id/comments',
     bearerAuthMiddleware,
     commentValidation,
-    async (req:RequestWithParamsAndBody<paramsIdModel, createCommentModel>, res:Response) => {
+    inputValidationMiddleware,
+    async (req:RequestWithParamsAndBody<paramsIdModel, createCommentModel>, res: Response<commentViewModel>) => {
         const post: postType | null = await postsQueryRepository.getPostById(req.params.id)
         if (!post) {
-            res.send(404)
+            res.sendStatus(404)
             return
         }
-        const newComment: commentViewModel | null = await commentsService.createComment(req.body.content, req.user!._id)
-        res.status(201).send(newComment)
+        const newComment: commentViewModel = await commentsService.createComment(req.body.content, req.user!)
+        return res.status(201).send(newComment)
+
     })
 
 postsRouter.get('/:id/comments',
-    bearerAuthMiddleware,
-    commentValidation,
     async (req: RequestWithParamsAndQuery<paramsIdModel, getAllCommentsQueryModel>, res: Response) => {
         const post: postType | null = await postsQueryRepository.getPostById(req.params.id)
         if (!post) {
@@ -117,5 +117,5 @@ postsRouter.get('/:id/comments',
             return
         }
         const returnedComments: commentsViewModel = await commentsQueryRepository.getAllComments(req.query)
-        res.status(201).send(returnedComments)
+        res.status(200).send(returnedComments)
     })

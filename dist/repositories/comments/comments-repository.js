@@ -13,18 +13,14 @@ exports.commentsRepository = void 0;
 const db_1 = require("../db");
 const mongodb_1 = require("mongodb");
 exports.commentsRepository = {
-    createComment(content, userId) {
+    createComment(content, user) {
         return __awaiter(this, void 0, void 0, function* () {
-            const userDb = yield db_1.usersCollection.findOne({ _id: userId });
-            if (!userDb) {
-                return null;
-            }
             const commentDb = {
                 _id: new mongodb_1.ObjectId(),
                 content: content,
                 createdAt: new Date().toISOString(),
-                userId: userDb._id.toString(),
-                userLogin: userDb.login
+                userId: user._id.toString(),
+                userLogin: user.login
             };
             yield db_1.commentsCollection.insertOne(commentDb);
             return {

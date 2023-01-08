@@ -17,7 +17,7 @@ const db = client.db();
 export const blogsCollection = db.collection<blogDbType>("blogs")
 export const postsCollection = db.collection<postDbType>("posts")
 export const usersCollection = db.collection<userDbType>("users")
-export const commentsCollection = db.collection<commentDbType>("users")
+export const commentsCollection = db.collection<commentDbType>("comments")
 
 
 export async function runDb() {

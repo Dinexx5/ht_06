@@ -25,6 +25,6 @@ authRouter.post('/login',
             res.status(201).send(token)
             return
         }
-        res.send (401)
+        res.send(401)
 
     })

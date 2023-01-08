@@ -26,9 +26,9 @@ export const usersRepository = {
         return result.deletedCount === 1
 
     },
-    async findUserById(userId: Object): Promise<userDbType | null> {
+    async findUserById(userId: Object): Promise<userDbType> {
         let user = await usersCollection.findOne({_id: userId})
-        return user
+        return user!
     }
 
 }

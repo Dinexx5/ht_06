@@ -45,7 +45,8 @@ export const usersService = {
 
     },
 
-    async findUserById(userId: Object): Promise<userDbType | null> {
+    async findUserById(userId: Object): Promise<userDbType> {
         return await usersRepository.findUserById(userId)
+
     }
 }

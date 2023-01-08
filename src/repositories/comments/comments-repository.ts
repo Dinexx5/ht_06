@@ -4,18 +4,14 @@ import {ObjectId} from "mongodb";
 
 
 export const commentsRepository = {
-    async createComment (content: string, userId: Object): Promise<commentViewModel | null> {
+    async createComment (content: string, user: userDbType): Promise<commentViewModel> {
 
-        const userDb:userDbType | null = await usersCollection.findOne({_id: userId })
-        if (!userDb) {
-            return null
-        }
         const commentDb: commentDbType = {
             _id: new ObjectId(),
             content: content,
             createdAt: new Date().toISOString(),
-            userId: userDb._id.toString(),
-            userLogin: userDb.login
+            userId: user._id.toString(),
+            userLogin: user.login
         }
         await commentsCollection.insertOne(commentDb)
         return {

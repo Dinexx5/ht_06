@@ -12,9 +12,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.commentsService = void 0;
 const comments_repository_1 = require("../repositories/comments/comments-repository");
 exports.commentsService = {
-    createComment(content, userId) {
+    createComment(content, user) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield comments_repository_1.commentsRepository.createComment(content, userId);
+            return yield comments_repository_1.commentsRepository.createComment(content, user);
         });
     }
 };

@@ -46,7 +46,7 @@ const db = client.db();
 exports.blogsCollection = db.collection("blogs");
 exports.postsCollection = db.collection("posts");
 exports.usersCollection = db.collection("users");
-exports.commentsCollection = db.collection("users");
+exports.commentsCollection = db.collection("comments");
 function runDb() {
     return __awaiter(this, void 0, void 0, function* () {
         try {

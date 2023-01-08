@@ -55,16 +55,16 @@ const objectIdIsValid = (req, res, next) => {
 exports.objectIdIsValid = objectIdIsValid;
 const bearerAuthMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.headers.authorization) {
-        res.send(401);
-        return;
+        return res.status(401).send();
     }
     const token = req.headers.authorization.split(' ')[1];
     const userId = yield jwt_service_1.jwtService.getUserIdByToken(token);
     if (userId) {
         req.user = yield users_service_1.usersService.findUserById(userId);
         next();
+        return;
     }
-    res.send(401);
+    return res.status(401).send();
 });
 exports.bearerAuthMiddleware = bearerAuthMiddleware;
 //blogs validation
