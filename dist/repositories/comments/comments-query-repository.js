@@ -29,7 +29,7 @@ exports.commentsQueryRepository = {
             const skippedCommentsNumber = (+pageNumber - 1) * +pageSize;
             const countAll = yield db_1.commentsCollection.countDocuments({ postId: postId });
             let commentsDb = yield db_1.commentsCollection
-                .find({})
+                .find({ postId: postId })
                 .sort({ [sortBy]: sortDirectionNumber })
                 .skip(skippedCommentsNumber)
                 .limit(+pageSize)

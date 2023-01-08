@@ -27,7 +27,7 @@ export const commentsQueryRepository = {
 
         const countAll = await commentsCollection.countDocuments({postId: postId})
         let commentsDb = await commentsCollection
-            .find({})
+            .find({postId: postId})
             .sort({[sortBy]: sortDirectionNumber})
             .skip(skippedCommentsNumber)
             .limit(+pageSize)
