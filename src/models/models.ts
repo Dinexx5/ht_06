@@ -125,8 +125,8 @@ export type createUserInputModel = {
 export type getAllUsersQueryModel = {
     sortBy: string
     sortDirection: string
-    pageNumber: number
-    pageSize: number
+    pageNumber: string
+    pageSize: string
     searchLoginTerm: string
     searchEmailTerm: string
 }
@@ -141,8 +141,8 @@ export type userModel = {
 export type queryUsers = {
     sortDirection: string
     sortBy: string
-    pageNumber: number
-    pageSize: number
+    pageNumber: string
+    pageSize: string
     searchLoginTerm: string | null
     searchEmailTerm: string | null
 }

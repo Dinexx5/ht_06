@@ -15,7 +15,7 @@ const input_validation_1 = require("../middlewares/input-validation");
 const users_service_1 = require("../domain/users-service");
 const users_query_repository_1 = require("../repositories/users-query-repository");
 exports.usersRouter = (0, express_1.Router)({});
-exports.usersRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.usersRouter.get('/', input_validation_1.basicAuthorisation, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const returnedUsers = yield users_query_repository_1.usersQueryRepository.getAllUsers(req.query);
     res.status(200).send(returnedUsers);
 }));

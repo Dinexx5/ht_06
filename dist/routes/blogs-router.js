@@ -17,7 +17,7 @@ const blogs_query_repository_1 = require("../repositories/blogs-query-repository
 const posts_service_1 = require("../domain/posts-service");
 const posts_query_repository_1 = require("../repositories/posts-query-repository");
 exports.blogsRouter = (0, express_1.Router)({});
-exports.blogsRouter.get('/', input_validation_1.basicAuthorisation, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.blogsRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const returnedBlogs = yield blogs_query_repository_1.blogsQueryRepository.getAllBlogs(req.query);
     res.status(200).send(returnedBlogs);
 }));

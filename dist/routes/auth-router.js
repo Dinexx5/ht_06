@@ -22,7 +22,7 @@ exports.authRouter.post('/login', input_validation_1.loginOrEmailValidation, inp
         return;
     }
     const token = yield jwt_service_1.jwtService.createJWT(user);
-    res.status(201).send({ "accessToken": token });
+    res.status(200).send({ "accessToken": token });
     return;
 }));
 exports.authRouter.get('/me', input_validation_1.bearerAuthMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

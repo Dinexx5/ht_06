@@ -31,7 +31,7 @@ export const usersQueryRepository = {
 
             const usersView = usersDb.map(mapDbUserToUserViewModel)
             return {
-                pagesCount: Math.ceil(countAllWithSearchLoginTerm/pageSize),
+                pagesCount: Math.ceil(countAllWithSearchLoginTerm/+pageSize),
                 page: +pageNumber,
                 pageSize: +pageSize,
                 totalCount: countAllWithSearchLoginTerm,
@@ -51,7 +51,7 @@ export const usersQueryRepository = {
 
             const usersView = usersDb.map(mapDbUserToUserViewModel)
             return {
-                pagesCount: Math.ceil(countAllWithSearchEmailTerm/pageSize),
+                pagesCount: Math.ceil(countAllWithSearchEmailTerm/+pageSize),
                 page: +pageNumber,
                 pageSize: +pageSize,
                 totalCount: countAllWithSearchEmailTerm,
@@ -71,7 +71,7 @@ export const usersQueryRepository = {
 
             const usersView = usersDb.map(mapDbUserToUserViewModel)
             return {
-                pagesCount: Math.ceil(countAllWithBothTerms/pageSize),
+                pagesCount: Math.ceil(countAllWithBothTerms/+pageSize),
                 page: +pageNumber,
                 pageSize: +pageSize,
                 totalCount: countAllWithBothTerms,
@@ -90,7 +90,7 @@ export const usersQueryRepository = {
 
         const usersView = usersDb.map(mapDbUserToUserViewModel)
         return {
-            pagesCount: Math.ceil(countAll/pageSize),
+            pagesCount: Math.ceil(countAll/+pageSize),
             page: +pageNumber,
             pageSize: +pageSize,
             totalCount: countAll,

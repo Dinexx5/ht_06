@@ -23,7 +23,7 @@ export const usersRouter = Router({})
 
 
 usersRouter.get('/',
-
+    basicAuthorisation,
     async (req: RequestWithQuery<getAllUsersQueryModel>, res: Response) => {
 
     const returnedUsers: usersViewModel= await usersQueryRepository.getAllUsers(req.query)
