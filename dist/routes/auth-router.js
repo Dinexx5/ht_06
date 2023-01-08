@@ -17,10 +17,19 @@ const jwt_service_1 = require("../application/jwt-service");
 exports.authRouter = (0, express_1.Router)({});
 exports.authRouter.post('/login', input_validation_1.loginOrEmailValidation, input_validation_1.passwordAuthValidation, input_validation_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield users_service_1.usersService.checkCredentials(req.body);
-    if (user) {
-        const token = yield jwt_service_1.jwtService.createJWT(user);
-        res.status(201).send(token);
+    if (!user) {
+        res.send(401);
         return;
     }
-    res.send(401);
+    const token = yield jwt_service_1.jwtService.createJWT(user);
+    res.status(201).send({ "accessToken": token });
+    return;
+}));
+exports.authRouter.get('/me', input_validation_1.bearerAuthMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user;
+    res.status(200).send({
+        "email": user.email,
+        "login": user.login,
+        "userId": user._id.toString()
+    });
 }));

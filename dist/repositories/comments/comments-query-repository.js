@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.commentsQueryRepository = void 0;
 const db_1 = require("../db");
+const mongodb_1 = require("mongodb");
 function commentsMapperToCommentType(comment) {
     return {
         userId: comment.userId,
@@ -41,6 +42,16 @@ exports.commentsQueryRepository = {
                 totalCount: countAll,
                 items: commentsView
             };
+        });
+    },
+    getCommentById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let _id = new mongodb_1.ObjectId(id);
+            let comment = yield db_1.commentsCollection.findOne({ _id: _id });
+            if (!comment) {
+                return null;
+            }
+            return commentsMapperToCommentType(comment);
         });
     }
 };

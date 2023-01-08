@@ -23,7 +23,6 @@ import {
 } from "../models/models";
 import {commentsService} from "../domain/comments-service";
 import {commentsQueryRepository} from "../repositories/comments/comments-query-repository";
-import {debug} from "util";
 
 
 export const postsRouter = Router({})

@@ -1,9 +1,14 @@
-import {commentsCollection, usersCollection} from "../db";
-import {commentDbType, commentViewModel, createCommentModel, userDbType, userModel} from "../../models/models";
+import {commentsCollection, postsCollection} from "../db";
+import {
+    commentDbType,
+    commentViewModel,
+    userDbType,
+} from "../../models/models";
 import {ObjectId} from "mongodb";
 
 
 export const commentsRepository = {
+
     async createComment (content: string, user: userDbType): Promise<commentViewModel> {
 
         const commentDb: commentDbType = {
@@ -21,5 +26,18 @@ export const commentsRepository = {
             userLogin: commentDb.userLogin,
             createdAt: commentDb.createdAt
         }
+    },
+
+    async updateComment (id: string, content: string): Promise<boolean> {
+        let _id = new ObjectId(id)
+        let result = await commentsCollection.updateOne({_id: _id}, {$set: {content: content}})
+        return result.matchedCount === 1
+    },
+
+    async deleteComment (id: string): Promise<boolean> {
+        let _id = new ObjectId(id)
+        let result = await commentsCollection.deleteOne({_id: _id})
+        return result.deletedCount === 1
     }
+
 }

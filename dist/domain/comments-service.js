@@ -16,5 +16,15 @@ exports.commentsService = {
         return __awaiter(this, void 0, void 0, function* () {
             return yield comments_repository_1.commentsRepository.createComment(content, user);
         });
+    },
+    updateCommentById(id, content) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield comments_repository_1.commentsRepository.updateComment(id, content);
+        });
+    },
+    deleteCommentById(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield comments_repository_1.commentsRepository.deleteComment(id);
+        });
     }
 };

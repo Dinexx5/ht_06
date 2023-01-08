@@ -31,5 +31,19 @@ exports.commentsRepository = {
                 createdAt: commentDb.createdAt
             };
         });
+    },
+    updateComment(id, content) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let _id = new mongodb_1.ObjectId(id);
+            let result = yield db_1.commentsCollection.updateOne({ _id: _id }, { $set: { content: content } });
+            return result.matchedCount === 1;
+        });
+    },
+    deleteComment(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let _id = new mongodb_1.ObjectId(id);
+            let result = yield db_1.commentsCollection.deleteOne({ _id: _id });
+            return result.deletedCount === 1;
+        });
     }
 };
