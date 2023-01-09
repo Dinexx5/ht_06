@@ -27,7 +27,6 @@ exports.usersService = {
                 login: login,
                 email: email,
                 passwordHash: passwordHash,
-                // passwordSalt: passwordSalt,
                 createdAt: new Date().toISOString()
             };
             return yield users_repository_db_1.usersRepository.createUser(newDbUser);
@@ -40,7 +39,6 @@ exports.usersService = {
             if (!user) {
                 return null;
             }
-            // const passwordHash = await this._generateHash(password, user.passwordSalt)
             const isValidPassword = yield bcrypt_1.default.compare(password, user.passwordHash);
             if (!isValidPassword) {
                 return null;

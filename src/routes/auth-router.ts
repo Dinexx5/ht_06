@@ -3,12 +3,12 @@ import {usersService} from "../domain/users-service";
 import {RequestWithBody} from "../repositories/types";
 import {authInputModel} from "../models/models";
 import {
-    bearerAuthMiddleware,
     inputValidationMiddleware,
     loginOrEmailValidation,
     passwordAuthValidation,
 } from "../middlewares/input-validation";
 import {jwtService} from "../application/jwt-service";
+import {bearerAuthMiddleware} from "../middlewares/auth-middlewares";
 
 
 export const authRouter = Router({})

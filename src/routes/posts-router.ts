@@ -1,7 +1,6 @@
 import {Response, Router} from "express"
 
-import {
-    basicAuthorisation, bearerAuthMiddleware, blogIdlValidation, commentValidation, contentValidation,
+import {blogIdlValidation, commentValidation, contentValidation,
     inputValidationMiddleware, objectIdIsValid,
     shortDescriptionValidation, titleValidation
 } from "../middlewares/input-validation";
@@ -23,6 +22,7 @@ import {
 } from "../models/models";
 import {commentsService} from "../domain/comments-service";
 import {commentsQueryRepository} from "../repositories/comments/comments-query-repository";
+import {basicAuthorisation, bearerAuthMiddleware} from "../middlewares/auth-middlewares";
 
 
 export const postsRouter = Router({})

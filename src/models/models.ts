@@ -61,38 +61,38 @@ export type QueryPosts = {
 }
 
 export type blogType = {
-    id: string,
-    name: string,
-    description: string,
-    websiteUrl: string,
+    id: string
+    name: string
+    description: string
+    websiteUrl: string
     createdAt: string
 }
 
 export type postType = {
-    id: string,
-    title: string,
-    shortDescription: string,
-    content: string,
-    blogId: string,
-    blogName: string,
+    id: string
+    title: string
+    shortDescription: string
+    content: string
+    blogId: string
+    blogName: string
     createdAt: string
 }
 
 export type blogDbType = {
-    _id: Object,
-    name: string,
-    description: string,
-    websiteUrl: string,
+    _id: Object
+    name: string
+    description: string
+    websiteUrl: string
     createdAt: string
 }
 
 export type postDbType = {
-    _id: Object,
-    title: string,
-    shortDescription: string,
-    content: string,
-    blogId: string,
-    blogName: string,
+    _id: Object
+    title: string
+    shortDescription: string
+    content: string
+    blogId: string
+    blogName: string
     createdAt: string
 }
 
@@ -155,10 +155,9 @@ export type usersViewModel = {
 }
 export type userDbType = {
     _id: Object
-    login: string,
-    email: string,
-    passwordHash: string,
-    // passwordSalt: string,
+    login: string
+    email: string
+    passwordHash: string
     createdAt: string
 }
 export type authInputModel = {

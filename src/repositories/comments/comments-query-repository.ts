@@ -1,9 +1,9 @@
 import {
     commentDbType, commentsViewModel,
     commentType, commentViewModel,
-    getAllCommentsQueryModel, postDbType, postType,
+    getAllCommentsQueryModel
 } from "../../models/models";
-import {commentsCollection, postsCollection} from "../db";
+import {commentsCollection} from "../db";
 import {ObjectId} from "mongodb";
 
 function commentsMapperToCommentType (comment: commentDbType): commentType {

@@ -2,25 +2,21 @@ import {Response, Router} from "express"
 import {commentsService} from "../domain/comments-service";
 import {commentsQueryRepository} from "../repositories/comments/comments-query-repository";
 import {
-    RequestWithBody, RequestWithParams,
-    RequestWithParamsAndBody, RequestWithParamsAndQuery, RequestWithQuery
+    RequestWithParams,
+    RequestWithParamsAndBody,
 } from "../repositories/types";
 import {
-    commentsViewModel,
     commentViewModel, createCommentModel,
-    getAllPostsQueryModel,
     paramsIdModel,
-    postsViewModel
 } from "../models/models";
-import {postsQueryRepository} from "../repositories/posts-query-repository";
-import {postsRouter} from "./posts-router";
+
 import {
-    bearerAuthMiddleware,
     commentValidation,
     inputValidationMiddleware,
     objectIdIsValid
 } from "../middlewares/input-validation";
-import {postsService} from "../domain/posts-service";
+import {bearerAuthMiddleware} from "../middlewares/auth-middlewares";
+
 
 
 export const commentsRouter = Router({})

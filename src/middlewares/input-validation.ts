@@ -3,18 +3,7 @@ import {body, validationResult} from "express-validator";
 import {blogsQueryRepository} from "../repositories/blogs-query-repository";
 import {blogType} from "../models/models";
 import {ObjectId} from "mongodb";
-import {jwtService} from "../application/jwt-service";
-import {usersService} from "../domain/users-service";
-import {debug} from "util";
 
-export const basicAuthorisation = (req: Request, res: Response, next: NextFunction) => {
-    const loginPass = req.headers.authorization;
-    if (loginPass === "Basic YWRtaW46cXdlcnR5") {
-        next()
-    } else {
-        return res.status(401).send("access forbidden")
-    }
-}
 
 const myValidationResult = validationResult.withDefaults({
     formatter: error => {
@@ -42,20 +31,6 @@ export const objectIdIsValid = (req: Request, res: Response, next: NextFunction)
     } else {
         return res.status(400).end()
     }
-}
-
-export const bearerAuthMiddleware = async (req:Request, res:Response, next: NextFunction) => {
-    if (!req.headers.authorization) {
-        return res.status(401).send()
-    }
-    const token = req.headers.authorization.split(' ')[1]
-    const userId = await jwtService.getUserIdByToken(token)
-    if (userId) {
-        req.user = await usersService.findUserById(userId)
-        next ()
-        return
-    }
-    return res.status(401).send()
 }
 
 

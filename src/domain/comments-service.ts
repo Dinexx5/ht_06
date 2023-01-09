@@ -1,4 +1,4 @@
-import {createCommentModel, userDbType} from "../models/models";
+import {userDbType} from "../models/models";
 import {commentsRepository} from "../repositories/comments/comments-repository";
 
 

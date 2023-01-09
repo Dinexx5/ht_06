@@ -14,6 +14,7 @@ const express_1 = require("express");
 const users_service_1 = require("../domain/users-service");
 const input_validation_1 = require("../middlewares/input-validation");
 const jwt_service_1 = require("../application/jwt-service");
+const auth_middlewares_1 = require("../middlewares/auth-middlewares");
 exports.authRouter = (0, express_1.Router)({});
 exports.authRouter.post('/login', input_validation_1.loginOrEmailValidation, input_validation_1.passwordAuthValidation, input_validation_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield users_service_1.usersService.checkCredentials(req.body);
@@ -25,7 +26,7 @@ exports.authRouter.post('/login', input_validation_1.loginOrEmailValidation, inp
     res.status(200).send({ "accessToken": token });
     return;
 }));
-exports.authRouter.get('/me', input_validation_1.bearerAuthMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.authRouter.get('/me', auth_middlewares_1.bearerAuthMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = req.user;
     res.status(200).send({
         "email": user.email,

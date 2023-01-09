@@ -1,6 +1,6 @@
 import {Response, Router} from "express"
 
-import {basicAuthorisation, emailValidation, inputValidationMiddleware,
+import {emailValidation, inputValidationMiddleware,
         loginValidation, objectIdIsValid, passwordValidation,
 } from "../middlewares/input-validation";
 
@@ -16,6 +16,7 @@ import {
 
 import {usersService} from "../domain/users-service";
 import {usersQueryRepository} from "../repositories/users-query-repository";
+import {basicAuthorisation} from "../middlewares/auth-middlewares";
 
 
 

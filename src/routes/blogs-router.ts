@@ -1,7 +1,6 @@
 import {Response, Router} from "express";
 import {blogsService} from "../domain/blogs-service";
-import {
-    basicAuthorisation, contentValidation, descriptionValidation,
+import {contentValidation, descriptionValidation,
     inputValidationMiddleware, nameValidation, objectIdIsValid,
     shortDescriptionValidation, titleValidation, websiteUrlValidation
 } from "../middlewares/input-validation";
@@ -19,6 +18,7 @@ import {
     createPostForSpecifiedBlogInputModel, getAllBlogsQueryModel,
     getPostsForSpecifiedBlogModel, paramsIdModel, postsViewModel, postType, updateBlogModel
 } from "../models/models";
+import {basicAuthorisation} from "../middlewares/auth-middlewares";
 
 
 
