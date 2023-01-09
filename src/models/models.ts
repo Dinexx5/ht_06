@@ -158,7 +158,7 @@ export type userDbType = {
     login: string,
     email: string,
     passwordHash: string,
-    passwordSalt: string,
+    // passwordSalt: string,
     createdAt: string
 }
 export type authInputModel = {
