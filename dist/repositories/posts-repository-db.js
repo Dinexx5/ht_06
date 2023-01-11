@@ -17,7 +17,7 @@ exports.postsRepository = {
     createPost(body) {
         return __awaiter(this, void 0, void 0, function* () {
             const { title, shortDescription, content, blogId } = body;
-            let foundBlog = yield blogs_query_repository_1.blogsQueryRepository.getBlogById(blogId);
+            let foundBlog = yield blogs_query_repository_1.blogsQueryRepository.findBlogById(blogId);
             const newDbPost = {
                 _id: new mongodb_1.ObjectId(),
                 title: title,
@@ -39,34 +39,9 @@ exports.postsRepository = {
             };
         });
     },
-    createPostForSpecifiedBlog(body, blogId) {
+    deletePostById(postId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { title, shortDescription, content } = body;
-            let foundBlog = yield blogs_query_repository_1.blogsQueryRepository.getBlogById(blogId);
-            const newDbPost = {
-                _id: new mongodb_1.ObjectId(),
-                title: title,
-                shortDescription: shortDescription,
-                content: content,
-                blogId: blogId,
-                blogName: foundBlog.name,
-                createdAt: foundBlog.createdAt
-            };
-            yield db_1.postsCollection.insertOne(newDbPost);
-            return {
-                id: newDbPost._id.toString(),
-                title: title,
-                shortDescription: shortDescription,
-                content: content,
-                blogId: blogId,
-                blogName: foundBlog.name,
-                createdAt: foundBlog.createdAt
-            };
-        });
-    },
-    deletePostById(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let _id = new mongodb_1.ObjectId(id);
+            let _id = new mongodb_1.ObjectId(postId);
             let result = yield db_1.postsCollection.deleteOne({ _id: _id });
             return result.deletedCount === 1;
         });
@@ -74,10 +49,6 @@ exports.postsRepository = {
     UpdatePostById(id, body) {
         return __awaiter(this, void 0, void 0, function* () {
             const { title, shortDescription, content, blogId } = body;
-            let foundBlog = yield blogs_query_repository_1.blogsQueryRepository.getBlogById(blogId);
-            if (!foundBlog) {
-                return false;
-            }
             let _id = new mongodb_1.ObjectId(id);
             let result = yield db_1.postsCollection.updateOne({ _id: _id }, { $set: { title: title, shortDescription: shortDescription, content: content, blogId: blogId } });
             return result.matchedCount === 1;

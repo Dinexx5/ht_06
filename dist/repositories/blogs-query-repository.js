@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.blogsQueryRepository = void 0;
 const db_1 = require("./db");
 const mongodb_1 = require("mongodb");
-function blogsMapperToBlogType(blog) {
+function mapFoundBlogToBlogViewModel(blog) {
     return {
         name: blog.name,
         description: blog.description,
@@ -25,17 +25,17 @@ exports.blogsQueryRepository = {
     getAllBlogs(query) {
         return __awaiter(this, void 0, void 0, function* () {
             const { sortDirection = "desc", sortBy = "createdAt", pageNumber = 1, pageSize = 10, searchNameTerm = null } = query;
-            const sortDirectionNumber = sortDirection === "desc" ? -1 : 1;
-            const skippedBlogsNumber = (+pageNumber - 1) * +pageSize;
+            const sortDirectionInt = sortDirection === "desc" ? -1 : 1;
+            const skippedBlogsCount = (+pageNumber - 1) * +pageSize;
             if (searchNameTerm) {
                 const countAllWithSearchTerm = yield db_1.blogsCollection.countDocuments({ name: { $regex: searchNameTerm, $options: 'i' } });
                 const blogsDb = yield db_1.blogsCollection
                     .find({ name: { $regex: searchNameTerm, $options: 'i' } })
-                    .sort({ [sortBy]: sortDirectionNumber })
-                    .skip(skippedBlogsNumber)
+                    .sort({ [sortBy]: sortDirectionInt })
+                    .skip(skippedBlogsCount)
                     .limit(+pageSize)
                     .toArray();
-                const blogsView = blogsDb.map(blogsMapperToBlogType);
+                const blogsView = blogsDb.map(mapFoundBlogToBlogViewModel);
                 return {
                     pagesCount: Math.ceil(countAllWithSearchTerm / +pageSize),
                     page: +pageNumber,
@@ -47,11 +47,11 @@ exports.blogsQueryRepository = {
             const countAll = yield db_1.blogsCollection.countDocuments();
             let blogsDb = yield db_1.blogsCollection
                 .find({})
-                .sort({ [sortBy]: sortDirectionNumber })
-                .skip(skippedBlogsNumber)
+                .sort({ [sortBy]: sortDirectionInt })
+                .skip(skippedBlogsCount)
                 .limit(+pageSize)
                 .toArray();
-            const blogsView = blogsDb.map(blogsMapperToBlogType);
+            const blogsView = blogsDb.map(mapFoundBlogToBlogViewModel);
             return {
                 pagesCount: Math.ceil(countAll / +pageSize),
                 page: +pageNumber,
@@ -61,14 +61,14 @@ exports.blogsQueryRepository = {
             };
         });
     },
-    getBlogById(id) {
+    findBlogById(blogId) {
         return __awaiter(this, void 0, void 0, function* () {
-            let _id = new mongodb_1.ObjectId(id);
-            let blog = yield db_1.blogsCollection.findOne({ _id: _id });
-            if (!blog) {
+            let _id = new mongodb_1.ObjectId(blogId);
+            let foundBlog = yield db_1.blogsCollection.findOne({ _id: _id });
+            if (!foundBlog) {
                 return null;
             }
-            return blogsMapperToBlogType(blog);
+            return mapFoundBlogToBlogViewModel(foundBlog);
         });
     },
 };

@@ -24,10 +24,10 @@ exports.usersRepository = {
             };
         });
     },
+    //checkCredentials
     findByLoginOrEmail(loginOrEmail) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield db_1.usersCollection.findOne({ $or: [{ email: loginOrEmail }, { login: loginOrEmail }] });
-            return user;
+            return yield db_1.usersCollection.findOne({ $or: [{ email: loginOrEmail }, { login: loginOrEmail }] });
         });
     },
     deleteUserById(id) {
@@ -37,6 +37,7 @@ exports.usersRepository = {
             return result.deletedCount === 1;
         });
     },
+    // req.user in bearerAuthMiddleware
     findUserById(userId) {
         return __awaiter(this, void 0, void 0, function* () {
             let user = yield db_1.usersCollection.findOne({ _id: userId });

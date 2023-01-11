@@ -1,6 +1,6 @@
 import request from 'supertest'
 import {app} from "../../src/appconfig";
-import {blogsViewModel, createBlogModel} from "../../src/models/models";
+import {paginatedBlogsViewModel, createBlogInputModel} from "../../src/models/models";
 
 describe('/blogs', () => {
     beforeAll(async () => {
@@ -30,7 +30,7 @@ describe('/blogs', () => {
     })
 
     it('should not create blog without authorization', async () => {
-        const correctBlogInput: createBlogModel = {
+        const correctBlogInput: createBlogInputModel = {
             name: 'hjjklol',
             description: 'jason stathem',
             websiteUrl: '54353'
@@ -96,7 +96,7 @@ describe('/blogs', () => {
     let createdBlog: any = null
 
     it('should create blog with all correct input', async () => {
-        const correctBlogInput: createBlogModel = {
+        const correctBlogInput: createBlogInputModel = {
             name: 'hjjklol',
             description: 'jason stathem',
             websiteUrl: 'https://www.youtube.com/'
@@ -128,7 +128,7 @@ describe('/blogs', () => {
     let createdBlog2: any = null
 
     it('should create 2nd blog with all correct input', async () => {
-        const correctBlogInput: createBlogModel = {
+        const correctBlogInput: createBlogInputModel = {
             name: '5345345l',
             description: 'jason stathem',
             websiteUrl: 'https://www.youtube.com/'

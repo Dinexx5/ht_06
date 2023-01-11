@@ -1,22 +1,21 @@
 import {Response, Router} from "express"
 
 import {emailValidation, inputValidationMiddleware,
-        loginValidation, objectIdIsValid, passwordValidation,
+        loginValidation, objectIdIsValidMiddleware, passwordValidation,
 } from "../middlewares/input-validation";
 
 import {RequestWithQuery, RequestWithParams, RequestWithBody} from "../repositories/types";
 
 import {
-    createUserInputModel,
-    getAllUsersQueryModel,
+    createUserInputModel, paginationQuerys,
     paramsIdModel,
-    userModel,
-    usersViewModel
+    userViewModel,
+    paginatedUsersViewModel
 } from "../models/models";
 
 import {usersService} from "../domain/users-service";
 import {usersQueryRepository} from "../repositories/users-query-repository";
-import {basicAuthorisation} from "../middlewares/auth-middlewares";
+import {basicAuthMiddleware} from "../middlewares/auth-middlewares";
 
 
 
@@ -24,37 +23,38 @@ export const usersRouter = Router({})
 
 
 usersRouter.get('/',
-    basicAuthorisation,
-    async (req: RequestWithQuery<getAllUsersQueryModel>, res: Response) => {
+    basicAuthMiddleware,
+    async (req: RequestWithQuery<paginationQuerys>, res: Response<paginatedUsersViewModel>) => {
 
-    const returnedUsers: usersViewModel= await usersQueryRepository.getAllUsers(req.query)
-
-    res.status(200).send(returnedUsers)
+    const returnedUsers: paginatedUsersViewModel = await usersQueryRepository.getAllUsers(req.query)
+    res.send(returnedUsers)
 
 
 })
 
 usersRouter.post('/',
-    basicAuthorisation,
+    basicAuthMiddleware,
     loginValidation,
     emailValidation,
     passwordValidation,
     inputValidationMiddleware,
-    async(req: RequestWithBody<createUserInputModel>, res: Response<userModel>) => {
+    async(req: RequestWithBody<createUserInputModel>, res: Response<userViewModel>) => {
+
     const newUser = await usersService.createUser(req.body)
     res.status(201).send(newUser)
 
 })
 
 usersRouter.delete('/:id',
-    basicAuthorisation,
-    objectIdIsValid,
+    basicAuthMiddleware,
+    objectIdIsValidMiddleware,
     async (req: RequestWithParams<paramsIdModel>, res: Response) => {
+
     const isDeleted: boolean = await usersService.deleteUserById(req.params.id)
-    if (isDeleted) {
-        res.send(204)
+    if (!isDeleted) {
+        res.send(404)
         return
     }
-    res.send(404)
+    res.send(204)
 
 })

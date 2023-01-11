@@ -1,8 +1,13 @@
 import {postsCollection} from "./db";
 import {ObjectId} from "mongodb";
-import {getAllPostsQueryModel, postDbType, postsViewModel, postType, QueryPosts} from "../models/models";
+import {
+    paginationQuerys,
+    postDbModel,
+    paginatedPostsViewModel,
+    postViewModel,
+} from "../models/models";
 
-function postsMapperToPostType (post: postDbType): postType {
+function postsMapperToPostType (post: postDbModel): postViewModel {
     return  {
         id: post._id.toString(),
         title: post.title,
@@ -18,7 +23,7 @@ function postsMapperToPostType (post: postDbType): postType {
 
 export const postsQueryRepository = {
 
-    async getAllPosts (query: getAllPostsQueryModel): Promise<postsViewModel> {
+    async getAllPosts (query: paginationQuerys): Promise<paginatedPostsViewModel> {
         const {sortDirection = "desc", sortBy = "createdAt",pageNumber = 1,pageSize = 10} = query
 
         const sortDirectionNumber: 1 | -1 = sortDirection === "desc" ? -1 : 1;
@@ -33,7 +38,7 @@ export const postsQueryRepository = {
             .toArray()
         const postsView = postsDb.map(postsMapperToPostType)
         return {
-            pagesCount: Math.ceil(countAll/pageSize),
+            pagesCount: Math.ceil(countAll/+pageSize),
             page: +pageNumber,
             pageSize: +pageSize,
             totalCount: countAll,
@@ -41,11 +46,11 @@ export const postsQueryRepository = {
         }
     },
 
-    async getPostForBlog (blogId: string, query: QueryPosts): Promise<postsViewModel> {
+    async findPostsForBlog (blogId: string, query: paginationQuerys): Promise<paginatedPostsViewModel> {
         const {sortDirection = "desc", sortBy = "createdAt",pageNumber = 1,pageSize = 10} = query
 
         const sortDirectionNumber: 1 | -1 = sortDirection === "desc" ? -1 : 1;
-        const skippedPostsNumber = (pageNumber-1)*pageSize
+        const skippedPostsNumber = (+pageNumber-1)*+pageSize
         const countAll = await postsCollection.countDocuments({blogId: {$regex: blogId} })
 
         let postsDb = await postsCollection
@@ -57,7 +62,7 @@ export const postsQueryRepository = {
 
         const postsView = postsDb.map(postsMapperToPostType)
         return {
-            pagesCount: Math.ceil(countAll/pageSize),
+            pagesCount: Math.ceil(countAll/+pageSize),
             page: +pageNumber,
             pageSize: +pageSize,
             totalCount: countAll,
@@ -65,15 +70,14 @@ export const postsQueryRepository = {
         }
     },
 
-    async getPostById (id: string): Promise<postType | null> {
+    async findPostById (postId: string): Promise<postViewModel | null> {
 
-        let _id = new ObjectId(id)
-        let post: postDbType | null = await postsCollection.findOne({_id: _id})
-        if (!post) {
+        let _id = new ObjectId(postId)
+        let foundPost: postDbModel | null = await postsCollection.findOne({_id: _id})
+        if (!foundPost) {
             return null
         }
-
-        return postsMapperToPostType(post)
+        return postsMapperToPostType(foundPost)
     },
 
 }

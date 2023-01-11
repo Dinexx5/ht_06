@@ -16,7 +16,7 @@ const comments_query_repository_1 = require("../repositories/comments/comments-q
 const input_validation_1 = require("../middlewares/input-validation");
 const auth_middlewares_1 = require("../middlewares/auth-middlewares");
 exports.commentsRouter = (0, express_1.Router)({});
-exports.commentsRouter.get('/:id', input_validation_1.objectIdIsValid, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.commentsRouter.get('/:id', input_validation_1.objectIdIsValidMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const returnedComment = yield comments_query_repository_1.commentsQueryRepository.getCommentById(req.params.id);
     if (!returnedComment) {
         res.send(404);
@@ -24,7 +24,7 @@ exports.commentsRouter.get('/:id', input_validation_1.objectIdIsValid, (req, res
     }
     res.status(200).send(returnedComment);
 }));
-exports.commentsRouter.put('/:id', auth_middlewares_1.bearerAuthMiddleware, input_validation_1.objectIdIsValid, input_validation_1.commentValidation, input_validation_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.commentsRouter.put('/:id', auth_middlewares_1.bearerAuthMiddleware, input_validation_1.objectIdIsValidMiddleware, input_validation_1.commentContentValidation, input_validation_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const comment = yield comments_query_repository_1.commentsQueryRepository.getCommentById(req.params.id);
     if (!comment) {
         res.send(404);
@@ -42,7 +42,7 @@ exports.commentsRouter.put('/:id', auth_middlewares_1.bearerAuthMiddleware, inpu
         res.send(404);
     }
 }));
-exports.commentsRouter.delete('/:id', auth_middlewares_1.bearerAuthMiddleware, input_validation_1.objectIdIsValid, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.commentsRouter.delete('/:id', auth_middlewares_1.bearerAuthMiddleware, input_validation_1.objectIdIsValidMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const comment = yield comments_query_repository_1.commentsQueryRepository.getCommentById(req.params.id);
     if (!comment) {
         res.send(404);

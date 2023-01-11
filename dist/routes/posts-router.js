@@ -22,52 +22,46 @@ exports.postsRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, fun
     const returnedPosts = yield posts_query_repository_1.postsQueryRepository.getAllPosts(req.query);
     res.status(200).send(returnedPosts);
 }));
-exports.postsRouter.get('/:id', input_validation_1.objectIdIsValid, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let post = yield posts_query_repository_1.postsQueryRepository.getPostById(req.params.id);
-    if (!post) {
-        res.send(404);
+exports.postsRouter.get('/:id', input_validation_1.objectIdIsValidMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let foundPost = yield posts_query_repository_1.postsQueryRepository.findPostById(req.params.id);
+    if (!foundPost) {
+        return res.send(404);
     }
-    else {
-        res.send(post);
-    }
+    res.send(foundPost);
 }));
-exports.postsRouter.post('/', auth_middlewares_1.basicAuthorisation, input_validation_1.titleValidation, input_validation_1.shortDescriptionValidation, input_validation_1.contentValidation, input_validation_1.blogIdlValidation, input_validation_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.postsRouter.post('/', auth_middlewares_1.basicAuthMiddleware, input_validation_1.titleValidation, input_validation_1.shortDescriptionValidation, input_validation_1.postContentValidation, input_validation_1.blogIdlValidation, input_validation_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const newPost = yield posts_service_1.postsService.createPost(req.body);
     res.status(201).send(newPost);
 }));
-exports.postsRouter.delete('/:id', auth_middlewares_1.basicAuthorisation, input_validation_1.objectIdIsValid, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.postsRouter.delete('/:id', auth_middlewares_1.basicAuthMiddleware, input_validation_1.objectIdIsValidMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const isDeleted = yield posts_service_1.postsService.deletePostById(req.params.id);
-    if (isDeleted) {
-        res.send(204);
+    if (!isDeleted) {
+        return res.send(404);
     }
-    else {
-        res.send(404);
-    }
+    res.send(204);
 }));
-exports.postsRouter.put('/:id', auth_middlewares_1.basicAuthorisation, input_validation_1.objectIdIsValid, input_validation_1.titleValidation, input_validation_1.shortDescriptionValidation, input_validation_1.contentValidation, input_validation_1.blogIdlValidation, input_validation_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.postsRouter.put('/:id', auth_middlewares_1.basicAuthMiddleware, input_validation_1.objectIdIsValidMiddleware, input_validation_1.titleValidation, input_validation_1.shortDescriptionValidation, input_validation_1.postContentValidation, input_validation_1.blogIdlValidation, input_validation_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let isUpdated = yield posts_service_1.postsService.UpdatePostById(req.params.id, req.body);
-    if (isUpdated) {
-        res.send(204);
+    if (!isUpdated) {
+        return res.send(404);
     }
-    else {
-        res.send(404);
-    }
+    res.send(204);
 }));
-exports.postsRouter.post('/:id/comments', auth_middlewares_1.bearerAuthMiddleware, input_validation_1.commentValidation, input_validation_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const post = yield posts_query_repository_1.postsQueryRepository.getPostById(req.params.id);
-    if (!post) {
-        res.sendStatus(404);
+exports.postsRouter.post('/:id/comments', auth_middlewares_1.bearerAuthMiddleware, input_validation_1.commentContentValidation, input_validation_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const foundPost = yield posts_query_repository_1.postsQueryRepository.findPostById(req.params.id);
+    if (!foundPost) {
+        res.send(404);
         return;
     }
     const newComment = yield comments_service_1.commentsService.createComment(req.body.content, req.user, req.params.id);
     return res.status(201).send(newComment);
 }));
 exports.postsRouter.get('/:id/comments', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const post = yield posts_query_repository_1.postsQueryRepository.getPostById(req.params.id);
-    if (!post) {
+    const foundPost = yield posts_query_repository_1.postsQueryRepository.findPostById(req.params.id);
+    if (!foundPost) {
         res.send(404);
         return;
     }
     const returnedComments = yield comments_query_repository_1.commentsQueryRepository.getAllCommentsForPost(req.query, req.params.id);
-    res.status(200).send(returnedComments);
+    res.send(returnedComments);
 }));

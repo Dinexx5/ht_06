@@ -1,7 +1,7 @@
 import {NextFunction, Request, Response} from "express";
 import {body, validationResult} from "express-validator";
 import {blogsQueryRepository} from "../repositories/blogs-query-repository";
-import {blogType} from "../models/models";
+import {blogViewModel} from "../models/models";
 import {ObjectId} from "mongodb";
 
 
@@ -24,13 +24,12 @@ export const inputValidationMiddleware = (req: Request, res: Response, next: Nex
 }
 
 
-export const objectIdIsValid = (req: Request, res: Response, next: NextFunction) => {
-    const id = req.params.id;
-    if (ObjectId.isValid(id)) {
+export const objectIdIsValidMiddleware = (req: Request, res: Response, next: NextFunction) => {
+    if (ObjectId.isValid(req.params.id)) {
         next()
-    } else {
-        return res.status(400).end()
+        return
     }
+    return res.status(400).send('invalid ObjectId')
 }
 
 
@@ -43,10 +42,10 @@ export const websiteUrlValidation = body('websiteUrl').trim().isURL().withMessag
 
 export const titleValidation = body('title').trim().isLength({max: 30}).withMessage('Incorrect length').not().isEmpty().withMessage('Not a string title')
 export const shortDescriptionValidation = body('shortDescription').trim().isLength({max: 100}).withMessage('Incorrect length').not().isEmpty().withMessage('Not a string desc')
-export const contentValidation = body('content').trim().isLength({max: 1000}).withMessage('Incorrect length').not().isEmpty().withMessage('Not a string content')
+export const postContentValidation = body('content').trim().isLength({max: 1000}).withMessage('Incorrect length').not().isEmpty().withMessage('Not a string content')
 export const blogIdlValidation = body('blogId').trim().not().isEmpty().withMessage('Not a string blogId').isLength({max: 30}).withMessage('Incorrect length of blogId')
     .custom(async (value) => {
-        const blog: blogType | null = await blogsQueryRepository.getBlogById(value)
+        const blog: blogViewModel | null = await blogsQueryRepository.findBlogById(value)
         if (!blog) {
             throw new Error('blog id does not exist');
         }
@@ -65,5 +64,5 @@ export const loginOrEmailValidation = body('loginOrEmail').trim().not().isEmpty(
 export const passwordAuthValidation = body('password').trim().not().isEmpty().withMessage('Not a string')
 
 //comments validation
-export const commentValidation = body('content').trim().isLength({min: 20, max: 300}).withMessage('Incorrect length').not().isEmpty().withMessage('Not a string')
+export const commentContentValidation = body('content').trim().isLength({min: 20, max: 300}).withMessage('Incorrect length').not().isEmpty().withMessage('Not a string')
 

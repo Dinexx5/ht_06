@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.commentValidation = exports.passwordAuthValidation = exports.loginOrEmailValidation = exports.emailValidation = exports.passwordValidation = exports.loginValidation = exports.blogIdlValidation = exports.contentValidation = exports.shortDescriptionValidation = exports.titleValidation = exports.websiteUrlValidation = exports.descriptionValidation = exports.nameValidation = exports.objectIdIsValid = exports.inputValidationMiddleware = void 0;
+exports.commentContentValidation = exports.passwordAuthValidation = exports.loginOrEmailValidation = exports.emailValidation = exports.passwordValidation = exports.loginValidation = exports.blogIdlValidation = exports.postContentValidation = exports.shortDescriptionValidation = exports.titleValidation = exports.websiteUrlValidation = exports.descriptionValidation = exports.nameValidation = exports.objectIdIsValidMiddleware = exports.inputValidationMiddleware = void 0;
 const express_validator_1 = require("express-validator");
 const blogs_query_repository_1 = require("../repositories/blogs-query-repository");
 const mongodb_1 = require("mongodb");
@@ -31,16 +31,14 @@ const inputValidationMiddleware = (req, res, next) => {
     }
 };
 exports.inputValidationMiddleware = inputValidationMiddleware;
-const objectIdIsValid = (req, res, next) => {
-    const id = req.params.id;
-    if (mongodb_1.ObjectId.isValid(id)) {
+const objectIdIsValidMiddleware = (req, res, next) => {
+    if (mongodb_1.ObjectId.isValid(req.params.id)) {
         next();
+        return;
     }
-    else {
-        return res.status(400).end();
-    }
+    return res.status(400).send('invalid ObjectId');
 };
-exports.objectIdIsValid = objectIdIsValid;
+exports.objectIdIsValidMiddleware = objectIdIsValidMiddleware;
 //blogs validation
 exports.nameValidation = (0, express_validator_1.body)('name').trim().isLength({ max: 15 }).withMessage('Incorrect length').not().isEmpty().withMessage('Not a string');
 exports.descriptionValidation = (0, express_validator_1.body)('description').trim().isLength({ max: 500 }).withMessage('Incorrect length').not().isEmpty().withMessage('Not a string');
@@ -48,10 +46,10 @@ exports.websiteUrlValidation = (0, express_validator_1.body)('websiteUrl').trim(
 //posts validation
 exports.titleValidation = (0, express_validator_1.body)('title').trim().isLength({ max: 30 }).withMessage('Incorrect length').not().isEmpty().withMessage('Not a string title');
 exports.shortDescriptionValidation = (0, express_validator_1.body)('shortDescription').trim().isLength({ max: 100 }).withMessage('Incorrect length').not().isEmpty().withMessage('Not a string desc');
-exports.contentValidation = (0, express_validator_1.body)('content').trim().isLength({ max: 1000 }).withMessage('Incorrect length').not().isEmpty().withMessage('Not a string content');
+exports.postContentValidation = (0, express_validator_1.body)('content').trim().isLength({ max: 1000 }).withMessage('Incorrect length').not().isEmpty().withMessage('Not a string content');
 exports.blogIdlValidation = (0, express_validator_1.body)('blogId').trim().not().isEmpty().withMessage('Not a string blogId').isLength({ max: 30 }).withMessage('Incorrect length of blogId')
     .custom((value) => __awaiter(void 0, void 0, void 0, function* () {
-    const blog = yield blogs_query_repository_1.blogsQueryRepository.getBlogById(value);
+    const blog = yield blogs_query_repository_1.blogsQueryRepository.findBlogById(value);
     if (!blog) {
         throw new Error('blog id does not exist');
     }
@@ -65,4 +63,4 @@ exports.emailValidation = (0, express_validator_1.body)('email').trim().isEmail(
 exports.loginOrEmailValidation = (0, express_validator_1.body)('loginOrEmail').trim().not().isEmpty().withMessage('Not a string');
 exports.passwordAuthValidation = (0, express_validator_1.body)('password').trim().not().isEmpty().withMessage('Not a string');
 //comments validation
-exports.commentValidation = (0, express_validator_1.body)('content').trim().isLength({ min: 20, max: 300 }).withMessage('Incorrect length').not().isEmpty().withMessage('Not a string');
+exports.commentContentValidation = (0, express_validator_1.body)('content').trim().isLength({ min: 20, max: 300 }).withMessage('Incorrect length').not().isEmpty().withMessage('Not a string');

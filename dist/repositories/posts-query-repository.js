@@ -38,7 +38,7 @@ exports.postsQueryRepository = {
                 .toArray();
             const postsView = postsDb.map(postsMapperToPostType);
             return {
-                pagesCount: Math.ceil(countAll / pageSize),
+                pagesCount: Math.ceil(countAll / +pageSize),
                 page: +pageNumber,
                 pageSize: +pageSize,
                 totalCount: countAll,
@@ -46,11 +46,11 @@ exports.postsQueryRepository = {
             };
         });
     },
-    getPostForBlog(blogId, query) {
+    findPostsForBlog(blogId, query) {
         return __awaiter(this, void 0, void 0, function* () {
             const { sortDirection = "desc", sortBy = "createdAt", pageNumber = 1, pageSize = 10 } = query;
             const sortDirectionNumber = sortDirection === "desc" ? -1 : 1;
-            const skippedPostsNumber = (pageNumber - 1) * pageSize;
+            const skippedPostsNumber = (+pageNumber - 1) * +pageSize;
             const countAll = yield db_1.postsCollection.countDocuments({ blogId: { $regex: blogId } });
             let postsDb = yield db_1.postsCollection
                 .find({ blogId: { $regex: blogId } })
@@ -60,7 +60,7 @@ exports.postsQueryRepository = {
                 .toArray();
             const postsView = postsDb.map(postsMapperToPostType);
             return {
-                pagesCount: Math.ceil(countAll / pageSize),
+                pagesCount: Math.ceil(countAll / +pageSize),
                 page: +pageNumber,
                 pageSize: +pageSize,
                 totalCount: countAll,
@@ -68,14 +68,14 @@ exports.postsQueryRepository = {
             };
         });
     },
-    getPostById(id) {
+    findPostById(postId) {
         return __awaiter(this, void 0, void 0, function* () {
-            let _id = new mongodb_1.ObjectId(id);
-            let post = yield db_1.postsCollection.findOne({ _id: _id });
-            if (!post) {
+            let _id = new mongodb_1.ObjectId(postId);
+            let foundPost = yield db_1.postsCollection.findOne({ _id: _id });
+            if (!foundPost) {
                 return null;
             }
-            return postsMapperToPostType(post);
+            return postsMapperToPostType(foundPost);
         });
     },
 };

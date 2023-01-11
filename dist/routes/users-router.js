@@ -16,19 +16,19 @@ const users_service_1 = require("../domain/users-service");
 const users_query_repository_1 = require("../repositories/users-query-repository");
 const auth_middlewares_1 = require("../middlewares/auth-middlewares");
 exports.usersRouter = (0, express_1.Router)({});
-exports.usersRouter.get('/', auth_middlewares_1.basicAuthorisation, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.usersRouter.get('/', auth_middlewares_1.basicAuthMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const returnedUsers = yield users_query_repository_1.usersQueryRepository.getAllUsers(req.query);
-    res.status(200).send(returnedUsers);
+    res.send(returnedUsers);
 }));
-exports.usersRouter.post('/', auth_middlewares_1.basicAuthorisation, input_validation_1.loginValidation, input_validation_1.emailValidation, input_validation_1.passwordValidation, input_validation_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.usersRouter.post('/', auth_middlewares_1.basicAuthMiddleware, input_validation_1.loginValidation, input_validation_1.emailValidation, input_validation_1.passwordValidation, input_validation_1.inputValidationMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const newUser = yield users_service_1.usersService.createUser(req.body);
     res.status(201).send(newUser);
 }));
-exports.usersRouter.delete('/:id', auth_middlewares_1.basicAuthorisation, input_validation_1.objectIdIsValid, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.usersRouter.delete('/:id', auth_middlewares_1.basicAuthMiddleware, input_validation_1.objectIdIsValidMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const isDeleted = yield users_service_1.usersService.deleteUserById(req.params.id);
-    if (isDeleted) {
-        res.send(204);
+    if (!isDeleted) {
+        res.send(404);
         return;
     }
-    res.send(404);
+    res.send(204);
 }));

@@ -23,12 +23,12 @@ exports.authRouter.post('/login', input_validation_1.loginOrEmailValidation, inp
         return;
     }
     const token = yield jwt_service_1.jwtService.createJWT(user);
-    res.status(200).send({ "accessToken": token });
+    res.send({ "accessToken": token });
     return;
 }));
 exports.authRouter.get('/me', auth_middlewares_1.bearerAuthMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = req.user;
-    res.status(200).send({
+    res.send({
         "email": user.email,
         "login": user.login,
         "userId": user._id.toString()

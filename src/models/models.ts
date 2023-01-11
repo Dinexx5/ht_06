@@ -1,43 +1,40 @@
-export type getPostsForSpecifiedBlogModel = {
-    sortBy: string
-    sortDirection: string
-    pageNumber: number
-    pageSize: number
+
+// export type getAllBlogsQueryModel = {
+//     sortBy: string
+//     sortDirection: string
+//     pageNumber: string
+//     pageSize: string
+//     searchNameTerm: string
+// }
+export type createBlogInputModel = {
+    name: string
+    description: string
+    websiteUrl:string
 }
-export type getAllBlogsQueryModel = {
-    sortBy: string
-    sortDirection: string
-    pageNumber: string
-    pageSize: string
-    searchNameTerm: string
+export type updateBlogInputModel = {
+    name: string
+    description: string
+    websiteUrl:string
 }
-export type createPostForSpecifiedBlogInputModel = {
+// export type getAllPostsQueryModel = {
+//     sortBy: string
+//     sortDirection: string
+//     pageNumber: number
+//     pageSize: number
+// }
+export type createPostInputModel = {
     title: string
     shortDescription: string
     content: string
 }
-export type createBlogModel = {
-    name: string
-    description: string
-    websiteUrl:string
-}
-export type updateBlogModel = {
-    name: string
-    description: string
-    websiteUrl:string
-}
-export type getAllPostsQueryModel = {
-    sortBy: string
-    sortDirection: string
-    pageNumber: number
-    pageSize: number
-}
-export type createPostInputModel = {
+
+export type createPostInputModelWithBlogId = {
     title: string
     shortDescription: string
     content: string
     blogId: string
 }
+
 export type updatePostInputModel = {
     title: string
     shortDescription: string
@@ -45,22 +42,14 @@ export type updatePostInputModel = {
     blogId: string
 }
 
-export type QueryBlogs = {
-    sortDirection: string
-    sortBy: string
-    pageNumber: string
-    pageSize: string
-    searchNameTerm: string | null
-}
+// export type QueryPosts = {
+//     sortDirection: string
+//     sortBy: string
+//     pageNumber: string
+//     pageSize: string
+// }
 
-export type QueryPosts = {
-    sortDirection: string
-    sortBy: string
-    pageNumber: number
-    pageSize: number
-}
-
-export type blogType = {
+export type blogViewModel = {
     id: string
     name: string
     description: string
@@ -68,7 +57,7 @@ export type blogType = {
     createdAt: string
 }
 
-export type postType = {
+export type postViewModel = {
     id: string
     title: string
     shortDescription: string
@@ -78,7 +67,7 @@ export type postType = {
     createdAt: string
 }
 
-export type blogDbType = {
+export type blogDbModel = {
     _id: Object
     name: string
     description: string
@@ -86,7 +75,7 @@ export type blogDbType = {
     createdAt: string
 }
 
-export type postDbType = {
+export type postDbModel = {
     _id: Object
     title: string
     shortDescription: string
@@ -96,20 +85,20 @@ export type postDbType = {
     createdAt: string
 }
 
-export type blogsViewModel = {
+export type paginatedBlogsViewModel = {
     pagesCount: number
     page: number
     pageSize: number
     totalCount: number
-    items: blogType[]
+    items: blogViewModel[]
 }
 
-export type postsViewModel = {
+export type paginatedPostsViewModel = {
     pagesCount: number
     page: number
     pageSize: number
     totalCount: number
-    items: postType[]
+    items: postViewModel[]
 }
 
 export type paramsIdModel = {
@@ -122,36 +111,37 @@ export type createUserInputModel = {
     email: string
 }
 
-export type getAllUsersQueryModel = {
-    sortBy: string
-    sortDirection: string
-    pageNumber: string
-    pageSize: string
-    searchLoginTerm: string
-    searchEmailTerm: string
-}
+// export type getAllUsersQueryModel = {
+//     sortBy: string
+//     sortDirection: string
+//     pageNumber: string
+//     pageSize: string
+//     searchLoginTerm: string
+//     searchEmailTerm: string
+// }
 
-export type userModel = {
+export type userViewModel = {
     id: string
     login: string
     email: string
     createdAt: string
 }
 
-export type queryUsers = {
-    sortDirection: string
-    sortBy: string
-    pageNumber: string
-    pageSize: string
-    searchLoginTerm: string | null
-    searchEmailTerm: string | null
-}
-export type usersViewModel = {
+// export type queryUsers = {
+//     sortDirection: string
+//     sortBy: string
+//     pageNumber: string
+//     pageSize: string
+//     searchLoginTerm: string | null
+//     searchEmailTerm: string | null
+// }
+
+export type paginatedUsersViewModel = {
     pagesCount: number
     page: number
     pageSize: number
     totalCount: number
-    items: userModel[]
+    items: userViewModel[]
 }
 export type userDbType = {
     _id: Object
@@ -164,7 +154,7 @@ export type authInputModel = {
     loginOrEmail: string
     password: string
 }
-export type createCommentModel = {
+export type createCommentInputModel = {
     content: string
 }
 
@@ -184,12 +174,12 @@ export type commentDbType = {
     postId: string
 }
 
-export type getAllCommentsQueryModel = {
-    sortBy: string
-    sortDirection: string
-    pageNumber: string
-    pageSize: string
-}
+// export type getAllCommentsQueryModel = {
+//     sortBy: string
+//     sortDirection: string
+//     pageNumber: string
+//     pageSize: string
+// }
 
 export type commentType = {
     id: string
@@ -198,10 +188,19 @@ export type commentType = {
     userId: string
     userLogin: string
 }
-export type commentsViewModel = {
+export type paginatedCommentsViewModel = {
     pagesCount: number
     page: number
     pageSize: number
     totalCount: number
     items: commentType []
+}
+export type paginationQuerys = {
+    sortDirection: string
+    sortBy: string
+    pageNumber: string
+    pageSize: string
+    searchNameTerm?: string
+    searchLoginTerm?: string
+    searchEmailTerm?: string
 }

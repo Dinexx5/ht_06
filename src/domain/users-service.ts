@@ -1,14 +1,14 @@
 import {usersRepository} from "../repositories/users-repository-db";
-import {authInputModel, createUserInputModel, userDbType, userModel} from "../models/models";
+import {authInputModel, createUserInputModel, userDbType, userViewModel} from "../models/models";
 import bcrypt from 'bcrypt'
 import {ObjectId} from "mongodb";
 
 export const usersService = {
 
-    async createUser(body: createUserInputModel): Promise<userModel> {
+    async createUser(body: createUserInputModel): Promise<userViewModel> {
         const {login , email, password} = body
         const passwordSalt = await bcrypt.genSalt(10)
-        const passwordHash = await this._generateHash(password, passwordSalt)
+        const passwordHash = await bcrypt.hash(password, passwordSalt)
         const newDbUser: userDbType = {
             _id: new ObjectId(),
             login: login,
@@ -26,6 +26,7 @@ export const usersService = {
             return null
         }
         const isValidPassword = await bcrypt.compare(password, user.passwordHash)
+
         if (!isValidPassword) {
             return null
         }
@@ -34,16 +35,13 @@ export const usersService = {
 
     },
 
-    async _generateHash(password: string, salt: string) {
-        const hash = bcrypt.hash(password, salt)
-        return hash
-    },
 
-    async deleteUserById(id:string): Promise<boolean> {
-        return await usersRepository.deleteUserById(id)
+    async deleteUserById(userId:string): Promise<boolean> {
+        return await usersRepository.deleteUserById(userId)
 
     },
 
+    // req.user in bearerAuthMiddleware
     async findUserById(userId: Object): Promise<userDbType> {
         return await usersRepository.findUserById(userId)
 

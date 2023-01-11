@@ -1,13 +1,14 @@
 import {blogsCollection} from "./db";
 import {ObjectId} from "mongodb";
-import {blogDbType, blogType, createBlogModel, updateBlogModel} from "../models/models";
+import {blogDbModel, blogViewModel, createBlogInputModel, updateBlogInputModel} from "../models/models";
 
 
 export const blogsRepository = {
 
-    async createBlogs(body: createBlogModel): Promise<blogType> {
-        const {name, description, websiteUrl} = body
-        const newDbBlog: blogDbType = {
+    async createBlog(blogBody: createBlogInputModel): Promise<blogViewModel> {
+
+        const {name, description, websiteUrl} = blogBody
+        const newDbBlog: blogDbModel = {
             _id: new ObjectId(),
             name: name,
             description: description,
@@ -22,21 +23,22 @@ export const blogsRepository = {
             createdAt: newDbBlog.createdAt,
             id: newDbBlog._id.toString()
         }
+
     },
 
 
-    async deleteBlogById(id: string): Promise<boolean> {
+    async deleteBlogById(blogId: string): Promise<boolean> {
 
-        let _id = new ObjectId(id)
+        let _id = new ObjectId(blogId)
         let result = await blogsCollection.deleteOne({_id: _id})
         return result.deletedCount === 1
 
     },
 
 
-    async UpdateBlogById(id: string, body: updateBlogModel): Promise<boolean> {
+    async UpdateBlogById(blogId: string, body: updateBlogInputModel): Promise<boolean> {
         const {name, description, websiteUrl} = body
-        let _id = new ObjectId(id)
+        let _id = new ObjectId(blogId)
         let result = await blogsCollection.updateOne({_id: _id}, {
             $set: {
                 name: name,

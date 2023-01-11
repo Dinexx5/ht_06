@@ -12,24 +12,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.postsService = void 0;
 const posts_repository_db_1 = require("../repositories/posts-repository-db");
 exports.postsService = {
-    createPost(body) {
+    createPost(postBody) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield posts_repository_db_1.postsRepository.createPost(body);
+            return yield posts_repository_db_1.postsRepository.createPost(postBody);
         });
     },
     createPostForSpecifiedBlog(body, blogId) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield posts_repository_db_1.postsRepository.createPostForSpecifiedBlog(body, blogId);
+            const postBody = Object.assign(Object.assign({}, body), { blogId });
+            return yield posts_repository_db_1.postsRepository.createPost(postBody);
         });
     },
-    deletePostById(id) {
+    deletePostById(postId) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield posts_repository_db_1.postsRepository.deletePostById(id);
+            return yield posts_repository_db_1.postsRepository.deletePostById(postId);
         });
     },
-    UpdatePostById(id, body) {
+    UpdatePostById(postId, postBody) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield posts_repository_db_1.postsRepository.UpdatePostById(id, body);
+            return yield posts_repository_db_1.postsRepository.UpdatePostById(postId, postBody);
         });
     }
 };

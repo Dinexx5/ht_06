@@ -1,24 +1,23 @@
 
 import {blogsRepository} from "../repositories/blogs-repository-db";
-
-import {blogType, createBlogModel, updateBlogModel} from "../models/models";
+import {blogViewModel, createBlogInputModel, updateBlogInputModel} from "../models/models";
 
 
 export const blogsService = {
 
 
-    async createBlogs(body: createBlogModel): Promise<blogType> {
-        return await blogsRepository.createBlogs(body)
+    async createBlog(blogBody: createBlogInputModel): Promise<blogViewModel> {
+        return await blogsRepository.createBlog(blogBody)
     },
 
 
-    async deleteBlogById(id: string): Promise<boolean> {
-        return await blogsRepository.deleteBlogById(id)
+    async deleteBlogById(blogId: string): Promise<boolean> {
+        return await blogsRepository.deleteBlogById(blogId)
     },
 
 
-    async UpdateBlogById(id: string, body: updateBlogModel): Promise<boolean> {
-        return await blogsRepository.UpdateBlogById(id, body)
+    async UpdateBlogById(blogId: string, blogBody: updateBlogInputModel): Promise<boolean> {
+        return await blogsRepository.UpdateBlogById(blogId, blogBody)
 
 
     }

@@ -1,7 +1,7 @@
 import {usersCollection} from "./db";
-import {queryUsers, userDbType, userModel, usersViewModel} from "../models/models";
+import {userDbType, userViewModel, paginatedUsersViewModel, paginationQuerys} from "../models/models";
 
-function mapDbUserToUserViewModel (user: userDbType): userModel {
+function mapDbUserToUserViewModel (user: userDbType): userViewModel {
     return  {
         login: user.login,
         email: user.email,
@@ -14,18 +14,18 @@ function mapDbUserToUserViewModel (user: userDbType): userModel {
 export const usersQueryRepository = {
 
 
-    async getAllUsers(query: queryUsers): Promise<usersViewModel> {
+    async getAllUsers(query: paginationQuerys): Promise<paginatedUsersViewModel> {
 
         const {sortDirection = "desc", sortBy = "createdAt", pageNumber = 1, pageSize = 10, searchLoginTerm = null, searchEmailTerm = null} = query
-        const sortDirectionNumber: 1 | -1 = sortDirection === "desc" ? -1 : 1;
-        const skippedUsersNumber = (+pageNumber-1)*+pageSize
+        const sortDirectionInt: 1 | -1 = sortDirection === "desc" ? -1 : 1;
+        const skippedUsersCount = (+pageNumber-1)*+pageSize
 
         if (searchLoginTerm && !searchEmailTerm){
             const countAllWithSearchLoginTerm = await usersCollection.countDocuments({login: {$regex: searchLoginTerm, $options: 'i' } })
             const usersDb: userDbType[] = await usersCollection
                 .find( {login: {$regex: searchLoginTerm, $options: 'i' } }  )
-                .sort( {[sortBy]: sortDirectionNumber} )
-                .skip(skippedUsersNumber)
+                .sort( {[sortBy]: sortDirectionInt} )
+                .skip(skippedUsersCount)
                 .limit(+pageSize)
                 .toArray()
 
@@ -44,8 +44,8 @@ export const usersQueryRepository = {
             const countAllWithSearchEmailTerm = await usersCollection.countDocuments({email: {$regex: searchEmailTerm, $options: 'i' } })
             const usersDb: userDbType[] = await usersCollection
                 .find( {email: {$regex: searchEmailTerm, $options: 'i' } }  )
-                .sort( {[sortBy]: sortDirectionNumber} )
-                .skip(skippedUsersNumber)
+                .sort( {[sortBy]: sortDirectionInt} )
+                .skip(skippedUsersCount)
                 .limit(+pageSize)
                 .toArray()
 
@@ -64,8 +64,8 @@ export const usersQueryRepository = {
             const countAllWithBothTerms = await usersCollection.countDocuments( {$or: [{email: {$regex: searchEmailTerm, $options: 'i' } }, {login: {$regex: searchLoginTerm, $options: 'i' }} ] })
             const usersDb: userDbType[] = await usersCollection
                 .find(  {$or: [{email: {$regex: searchEmailTerm, $options: 'i' } }, {login: {$regex: searchLoginTerm, $options: 'i' }} ] } )
-                .sort( {[sortBy]: sortDirectionNumber} )
-                .skip(skippedUsersNumber)
+                .sort( {[sortBy]: sortDirectionInt} )
+                .skip(skippedUsersCount)
                 .limit(+pageSize)
                 .toArray()
 
@@ -83,8 +83,8 @@ export const usersQueryRepository = {
         const countAll = await usersCollection.countDocuments()
         const usersDb = await usersCollection
             .find( { } )
-            .sort( {[sortBy]: sortDirectionNumber} )
-            .skip(skippedUsersNumber)
+            .sort( {[sortBy]: sortDirectionInt} )
+            .skip(skippedUsersCount)
             .limit(+pageSize)
             .toArray()
 

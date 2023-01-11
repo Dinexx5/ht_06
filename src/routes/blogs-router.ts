@@ -1,7 +1,7 @@
 import {Response, Router} from "express";
 import {blogsService} from "../domain/blogs-service";
-import {contentValidation, descriptionValidation,
-    inputValidationMiddleware, nameValidation, objectIdIsValid,
+import {postContentValidation, descriptionValidation,
+    inputValidationMiddleware, nameValidation, objectIdIsValidMiddleware,
     shortDescriptionValidation, titleValidation, websiteUrlValidation
 } from "../middlewares/input-validation";
 
@@ -14,11 +14,17 @@ import {blogsQueryRepository} from "../repositories/blogs-query-repository";
 import {postsService} from "../domain/posts-service";
 import {postsQueryRepository} from "../repositories/posts-query-repository";
 import {
-    blogsViewModel, blogType, createBlogModel,
-    createPostForSpecifiedBlogInputModel, getAllBlogsQueryModel,
-    getPostsForSpecifiedBlogModel, paramsIdModel, postsViewModel, postType, updateBlogModel
+    paginatedBlogsViewModel,
+    blogViewModel,
+    createBlogInputModel,
+    paginationQuerys,
+    paramsIdModel,
+    paginatedPostsViewModel,
+    postViewModel,
+    updateBlogInputModel,
+    createPostInputModel
 } from "../models/models";
-import {basicAuthorisation} from "../middlewares/auth-middlewares";
+import {basicAuthMiddleware} from "../middlewares/auth-middlewares";
 
 
 
@@ -26,101 +32,92 @@ export const blogsRouter = Router({})
 
 
 blogsRouter.get('/',
-    async (req: RequestWithQuery<getAllBlogsQueryModel>, res: Response<blogsViewModel>) => {
+    async (req: RequestWithQuery<paginationQuerys>, res: Response<paginatedBlogsViewModel>) => {
 
+    const returnedBlogs: paginatedBlogsViewModel = await blogsQueryRepository.getAllBlogs(req.query)
 
-    const returnedBlogs: blogsViewModel = await blogsQueryRepository.getAllBlogs(req.query)
-
-    res.status(200).send(returnedBlogs)
+    res.send(returnedBlogs)
 })
 
 blogsRouter.get('/:id',
-    objectIdIsValid,
+    objectIdIsValidMiddleware,
     async (req: RequestWithParams<paramsIdModel>, res: Response) => {
-    const blog: blogType | null = await blogsQueryRepository.getBlogById(req.params.id)
+    const blog: blogViewModel | null = await blogsQueryRepository.findBlogById(req.params.id)
     if (!blog) {
-        res.send(404)
-    } else {
-        res.send(blog)
+        return res.send(404)
     }
+    res.send(blog)
 })
 
 blogsRouter.get('/:id/posts',
-    async (req: RequestWithParamsAndQuery<paramsIdModel, getPostsForSpecifiedBlogModel>, res: Response) => {
+    objectIdIsValidMiddleware,
+    async (req: RequestWithParamsAndQuery<paramsIdModel, paginationQuerys>, res: Response) => {
 
-    const blog: blogType | null = await blogsQueryRepository.getBlogById(req.params.id)
+    const blog: blogViewModel | null = await blogsQueryRepository.findBlogById(req.params.id)
     if (!blog) {
-        res.send(404)
-        return
+        return res.send(404)
     }
-
-    const returnedPosts: postsViewModel = await postsQueryRepository.getPostForBlog(req.params.id, req.query)
-
-    res.status(200).send(returnedPosts)
+    const foundPosts: paginatedPostsViewModel = await postsQueryRepository.findPostsForBlog(req.params.id, req.query)
+    res.send(foundPosts)
 
     })
 
 
 blogsRouter.post('/:id/posts',
-    basicAuthorisation,
+    basicAuthMiddleware,
     titleValidation,
     shortDescriptionValidation,
-    contentValidation,
+    postContentValidation,
     inputValidationMiddleware,
-    async (req: RequestWithParamsAndBody<paramsIdModel, createPostForSpecifiedBlogInputModel>, res: Response) => {
+    async (req: RequestWithParamsAndBody<paramsIdModel, createPostInputModel>, res: Response) => {
 
-        const blogId = req.params.id
-        const blog: blogType | null = await blogsQueryRepository.getBlogById(blogId)
-        if (!blog) {
-            res.send(404)
-            return
-        }
-
-        const newPost: postType = await postsService.createPostForSpecifiedBlog(req.body, blogId)
-        res.status(201).send(newPost)
+    const blogId = req.params.id
+    const blog: blogViewModel | null = await blogsQueryRepository.findBlogById(blogId)
+    if (!blog) {
+        return res.send(404)
+    }
+    const newPost: postViewModel = await postsService.createPostForSpecifiedBlog(req.body, blogId)
+    res.status(201).send(newPost)
 
 })
 
 blogsRouter.post('/',
-    basicAuthorisation,
+    basicAuthMiddleware,
     nameValidation,
     descriptionValidation,
     websiteUrlValidation,
     inputValidationMiddleware,
-    async (req: RequestWithBody<createBlogModel>, res: Response<blogType>) => {
+    async (req: RequestWithBody<createBlogInputModel>, res: Response<blogViewModel>) => {
 
+    const newBlog: blogViewModel = await blogsService.createBlog(req.body)
+    res.status(201).send(newBlog)
 
-        const newBlog: blogType = await blogsService.createBlogs(req.body)
-        res.status(201).send(newBlog)
     })
 
 blogsRouter.delete('/:id',
-    basicAuthorisation,
-    objectIdIsValid,
+    basicAuthMiddleware,
+    objectIdIsValidMiddleware,
     async (req: RequestWithParams<paramsIdModel>, res: Response) => {
     const isDeleted: boolean = await blogsService.deleteBlogById(req.params.id)
-    if (isDeleted) {
-        res.send(204)
-    } else {
-        res.send(404)
+    if (!isDeleted) {
+       return res.send(404)
     }
+    res.send(204)
 })
 
 blogsRouter.put('/:id',
-    basicAuthorisation,
-    objectIdIsValid,
+    basicAuthMiddleware,
+    objectIdIsValidMiddleware,
     nameValidation,
     descriptionValidation,
     websiteUrlValidation,
     inputValidationMiddleware,
-    async (req: RequestWithParamsAndBody<paramsIdModel, updateBlogModel>, res: Response) => {
+    async (req: RequestWithParamsAndBody<paramsIdModel, updateBlogInputModel>, res: Response) => {
 
-        let isUpdated: boolean = await blogsService.UpdateBlogById(req.params.id, req.body)
+    let isUpdated: boolean = await blogsService.UpdateBlogById(req.params.id, req.body)
+    if (!isUpdated) {
+        return res.send(404)
+    }
+    res.send(204)
 
-        if (isUpdated) {
-            res.send(204)
-        } else {
-            res.send(404)
-
-        }
     })

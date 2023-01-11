@@ -9,10 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.bearerAuthMiddleware = exports.basicAuthorisation = void 0;
+exports.bearerAuthMiddleware = exports.basicAuthMiddleware = void 0;
 const jwt_service_1 = require("../application/jwt-service");
 const users_service_1 = require("../domain/users-service");
-const basicAuthorisation = (req, res, next) => {
+const basicAuthMiddleware = (req, res, next) => {
     const loginPass = req.headers.authorization;
     if (loginPass === "Basic YWRtaW46cXdlcnR5") {
         next();
@@ -21,10 +21,10 @@ const basicAuthorisation = (req, res, next) => {
         return res.status(401).send("access forbidden");
     }
 };
-exports.basicAuthorisation = basicAuthorisation;
+exports.basicAuthMiddleware = basicAuthMiddleware;
 const bearerAuthMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     if (!req.headers.authorization) {
-        return res.status(401).send();
+        return res.status(401).send("no token provided");
     }
     const token = req.headers.authorization.split(' ')[1];
     const userId = yield jwt_service_1.jwtService.getUserIdByToken(token);
@@ -33,6 +33,6 @@ const bearerAuthMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 
         next();
         return;
     }
-    return res.status(401).send();
+    return res.status(401).send("user not found");
 });
 exports.bearerAuthMiddleware = bearerAuthMiddleware;

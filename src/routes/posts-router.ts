@@ -1,7 +1,7 @@
 import {Response, Router} from "express"
 
-import {blogIdlValidation, commentValidation, contentValidation,
-    inputValidationMiddleware, objectIdIsValid,
+import {blogIdlValidation, commentContentValidation, postContentValidation,
+    inputValidationMiddleware, objectIdIsValidMiddleware,
     shortDescriptionValidation, titleValidation
 } from "../middlewares/input-validation";
 
@@ -15,106 +15,119 @@ import {
 import {postsQueryRepository} from "../repositories/posts-query-repository";
 
 import {
-    commentsViewModel, commentViewModel,
-    createCommentModel,
-    createPostInputModel, getAllCommentsQueryModel, getAllPostsQueryModel, paramsIdModel,
-    postsViewModel, postType, updatePostInputModel
+    paginatedCommentsViewModel, commentViewModel,
+    createCommentInputModel, paramsIdModel,
+    paginatedPostsViewModel, postViewModel, updatePostInputModel, createPostInputModelWithBlogId, paginationQuerys
 } from "../models/models";
 import {commentsService} from "../domain/comments-service";
 import {commentsQueryRepository} from "../repositories/comments/comments-query-repository";
-import {basicAuthorisation, bearerAuthMiddleware} from "../middlewares/auth-middlewares";
+import {basicAuthMiddleware, bearerAuthMiddleware} from "../middlewares/auth-middlewares";
 
 
 export const postsRouter = Router({})
 
 
 
-postsRouter.get('/', async (req: RequestWithQuery<getAllPostsQueryModel>, res: Response<postsViewModel>) => {
+postsRouter.get('/', async (req: RequestWithQuery<paginationQuerys>, res: Response<paginatedPostsViewModel>) => {
 
-    const returnedPosts: postsViewModel = await postsQueryRepository.getAllPosts(req.query)
+    const returnedPosts: paginatedPostsViewModel = await postsQueryRepository.getAllPosts(req.query)
     res.status(200).send(returnedPosts)
+
 })
 
 postsRouter.get('/:id',
-    objectIdIsValid,
+    objectIdIsValidMiddleware,
     async (req: RequestWithParams<paramsIdModel>, res: Response) => {
-    let post: postType | null = await postsQueryRepository.getPostById(req.params.id)
-    if (!post) {
-        res.send(404)
-    } else {
-        res.send(post)
+
+    let foundPost: postViewModel | null = await postsQueryRepository.findPostById(req.params.id)
+
+    if (!foundPost) {
+       return res.send(404)
     }
+
+    res.send(foundPost)
+
 })
 
 postsRouter.post('/',
-    basicAuthorisation,
+    basicAuthMiddleware,
     titleValidation,
     shortDescriptionValidation,
-    contentValidation,
+    postContentValidation,
     blogIdlValidation,
     inputValidationMiddleware,
-    async (req: RequestWithBody<createPostInputModel>, res: Response<postType>) => {
+    async (req: RequestWithBody<createPostInputModelWithBlogId>, res: Response<postViewModel>) => {
 
-        const newPost: postType = await postsService.createPost(req.body)
-        res.status(201).send(newPost)
+    const newPost: postViewModel = await postsService.createPost(req.body)
+    res.status(201).send(newPost)
 
 
     })
 
 postsRouter.delete('/:id',
-    basicAuthorisation,
-    objectIdIsValid,
+    basicAuthMiddleware,
+    objectIdIsValidMiddleware,
     async (req: RequestWithParams<paramsIdModel>, res: Response) => {
+
     const isDeleted: boolean = await postsService.deletePostById(req.params.id)
-    if (isDeleted) {
-        res.send(204)
-    } else {
-        res.send(404)
+
+    if (!isDeleted) {
+       return res.send(404)
     }
+
+    res.send(204)
+
 })
 
 postsRouter.put('/:id',
-    basicAuthorisation,
-    objectIdIsValid,
+    basicAuthMiddleware,
+    objectIdIsValidMiddleware,
     titleValidation,
     shortDescriptionValidation,
-    contentValidation,
+    postContentValidation,
     blogIdlValidation,
     inputValidationMiddleware,
     async (req: RequestWithParamsAndBody<paramsIdModel, updatePostInputModel>, res: Response) => {
 
-        let isUpdated: boolean = await postsService.UpdatePostById(req.params.id, req.body)
+    let isUpdated: boolean = await postsService.UpdatePostById(req.params.id, req.body)
 
-        if (isUpdated) {
-            res.send(204)
-        } else {
-            res.send(404)
+    if (!isUpdated) {
+        return res.send(404)
+    }
 
-        }
+    res.send(204)
+
     })
 
 postsRouter.post('/:id/comments',
     bearerAuthMiddleware,
-    commentValidation,
+    commentContentValidation,
     inputValidationMiddleware,
-    async (req:RequestWithParamsAndBody<paramsIdModel, createCommentModel>, res: Response<commentViewModel>) => {
-        const post: postType | null = await postsQueryRepository.getPostById(req.params.id)
-        if (!post) {
-            res.sendStatus(404)
-            return
-        }
-        const newComment: commentViewModel = await commentsService.createComment(req.body.content, req.user!, req.params.id)
-        return res.status(201).send(newComment)
+    async (req:RequestWithParamsAndBody<paramsIdModel, createCommentInputModel>, res: Response) => {
+
+    const foundPost: postViewModel | null = await postsQueryRepository.findPostById(req.params.id)
+
+    if (!foundPost) {
+        res.send(404)
+        return
+    }
+
+    const newComment: commentViewModel = await commentsService.createComment(req.body.content, req.user!, req.params.id)
+    return res.status(201).send(newComment)
 
     })
 
 postsRouter.get('/:id/comments',
-    async (req: RequestWithParamsAndQuery<paramsIdModel, getAllCommentsQueryModel>, res: Response) => {
-        const post: postType | null = await postsQueryRepository.getPostById(req.params.id)
-        if (!post) {
-            res.send(404)
-            return
-        }
-        const returnedComments: commentsViewModel = await commentsQueryRepository.getAllCommentsForPost(req.query, req.params.id)
-        res.status(200).send(returnedComments)
+    async (req: RequestWithParamsAndQuery<paramsIdModel, paginationQuerys>, res: Response) => {
+
+    const foundPost: postViewModel | null = await postsQueryRepository.findPostById(req.params.id)
+
+    if (!foundPost) {
+        res.send(404)
+        return
+    }
+
+    const returnedComments: paginatedCommentsViewModel = await commentsQueryRepository.getAllCommentsForPost(req.query, req.params.id)
+    res.send(returnedComments)
+
     })

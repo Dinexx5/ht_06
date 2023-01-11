@@ -13,9 +13,9 @@ exports.blogsRepository = void 0;
 const db_1 = require("./db");
 const mongodb_1 = require("mongodb");
 exports.blogsRepository = {
-    createBlogs(body) {
+    createBlog(blogBody) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { name, description, websiteUrl } = body;
+            const { name, description, websiteUrl } = blogBody;
             const newDbBlog = {
                 _id: new mongodb_1.ObjectId(),
                 name: name,
@@ -33,17 +33,17 @@ exports.blogsRepository = {
             };
         });
     },
-    deleteBlogById(id) {
+    deleteBlogById(blogId) {
         return __awaiter(this, void 0, void 0, function* () {
-            let _id = new mongodb_1.ObjectId(id);
+            let _id = new mongodb_1.ObjectId(blogId);
             let result = yield db_1.blogsCollection.deleteOne({ _id: _id });
             return result.deletedCount === 1;
         });
     },
-    UpdateBlogById(id, body) {
+    UpdateBlogById(blogId, body) {
         return __awaiter(this, void 0, void 0, function* () {
             const { name, description, websiteUrl } = body;
-            let _id = new mongodb_1.ObjectId(id);
+            let _id = new mongodb_1.ObjectId(blogId);
             let result = yield db_1.blogsCollection.updateOne({ _id: _id }, {
                 $set: {
                     name: name,

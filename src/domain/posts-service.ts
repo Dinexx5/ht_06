@@ -1,8 +1,7 @@
 import {postsRepository} from "../repositories/posts-repository-db";
 import {
-    createPostForSpecifiedBlogInputModel,
-    createPostInputModel,
-    postType,
+    createPostInputModel, createPostInputModelWithBlogId,
+    postViewModel,
     updatePostInputModel
 } from "../models/models";
 
@@ -10,22 +9,22 @@ import {
 export const postsService = {
 
 
-    async createPost(body: createPostInputModel): Promise<postType> {
-        return await postsRepository.createPost(body)
+    async createPost(postBody: createPostInputModelWithBlogId): Promise<postViewModel> {
+        return await postsRepository.createPost(postBody)
     },
 
-    async createPostForSpecifiedBlog (body: createPostForSpecifiedBlogInputModel, blogId: string): Promise<postType> {
-        return await postsRepository.createPostForSpecifiedBlog(body, blogId)
+    async createPostForSpecifiedBlog (body: createPostInputModel, blogId: string): Promise<postViewModel> {
+        const postBody: createPostInputModelWithBlogId = {...body, blogId}
+        return await postsRepository.createPost(postBody)
     },
 
-    async deletePostById(id: string): Promise<boolean> {
-        return await postsRepository.deletePostById(id)
+    async deletePostById(postId: string): Promise<boolean> {
+        return await postsRepository.deletePostById(postId)
     },
 
 
-    async UpdatePostById(id: string, body: updatePostInputModel): Promise<boolean> {
-        return await postsRepository.UpdatePostById(id, body)
-
+    async UpdatePostById(postId: string, postBody: updatePostInputModel): Promise<boolean> {
+        return await postsRepository.UpdatePostById(postId, postBody)
 
     }
 }

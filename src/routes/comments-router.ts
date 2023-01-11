@@ -6,14 +6,14 @@ import {
     RequestWithParamsAndBody,
 } from "../repositories/types";
 import {
-    commentViewModel, createCommentModel,
+    commentViewModel, createCommentInputModel,
     paramsIdModel,
 } from "../models/models";
 
 import {
-    commentValidation,
+    commentContentValidation,
     inputValidationMiddleware,
-    objectIdIsValid
+    objectIdIsValidMiddleware
 } from "../middlewares/input-validation";
 import {bearerAuthMiddleware} from "../middlewares/auth-middlewares";
 
@@ -22,7 +22,7 @@ import {bearerAuthMiddleware} from "../middlewares/auth-middlewares";
 export const commentsRouter = Router({})
 
 commentsRouter.get('/:id',
-    objectIdIsValid,
+    objectIdIsValidMiddleware,
     async (req: RequestWithParams<paramsIdModel>, res: Response) => {
 
     const returnedComment: commentViewModel | null = await commentsQueryRepository.getCommentById(req.params.id)
@@ -35,10 +35,10 @@ commentsRouter.get('/:id',
 
 commentsRouter.put('/:id',
     bearerAuthMiddleware,
-    objectIdIsValid,
-    commentValidation,
+    objectIdIsValidMiddleware,
+    commentContentValidation,
     inputValidationMiddleware,
-    async (req: RequestWithParamsAndBody<paramsIdModel, createCommentModel>, res: Response) => {
+    async (req: RequestWithParamsAndBody<paramsIdModel, createCommentInputModel>, res: Response) => {
 
         const comment: commentViewModel | null = await commentsQueryRepository.getCommentById(req.params.id)
 
@@ -63,7 +63,7 @@ commentsRouter.put('/:id',
 
 commentsRouter.delete('/:id',
     bearerAuthMiddleware,
-    objectIdIsValid,
+    objectIdIsValidMiddleware,
     async (req: RequestWithParams<paramsIdModel>, res: Response) => {
 
         const comment: commentViewModel | null = await commentsQueryRepository.getCommentById(req.params.id)

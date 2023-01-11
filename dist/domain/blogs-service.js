@@ -12,19 +12,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.blogsService = void 0;
 const blogs_repository_db_1 = require("../repositories/blogs-repository-db");
 exports.blogsService = {
-    createBlogs(body) {
+    createBlog(blogBody) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield blogs_repository_db_1.blogsRepository.createBlogs(body);
+            return yield blogs_repository_db_1.blogsRepository.createBlog(blogBody);
         });
     },
-    deleteBlogById(id) {
+    deleteBlogById(blogId) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield blogs_repository_db_1.blogsRepository.deleteBlogById(id);
+            return yield blogs_repository_db_1.blogsRepository.deleteBlogById(blogId);
         });
     },
-    UpdateBlogById(id, body) {
+    UpdateBlogById(blogId, blogBody) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield blogs_repository_db_1.blogsRepository.UpdateBlogById(id, body);
+            return yield blogs_repository_db_1.blogsRepository.UpdateBlogById(blogId, blogBody);
         });
     }
 };

@@ -21,7 +21,7 @@ exports.usersService = {
         return __awaiter(this, void 0, void 0, function* () {
             const { login, email, password } = body;
             const passwordSalt = yield bcrypt_1.default.genSalt(10);
-            const passwordHash = yield this._generateHash(password, passwordSalt);
+            const passwordHash = yield bcrypt_1.default.hash(password, passwordSalt);
             const newDbUser = {
                 _id: new mongodb_1.ObjectId(),
                 login: login,
@@ -46,17 +46,12 @@ exports.usersService = {
             return user;
         });
     },
-    _generateHash(password, salt) {
+    deleteUserById(userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const hash = bcrypt_1.default.hash(password, salt);
-            return hash;
+            return yield users_repository_db_1.usersRepository.deleteUserById(userId);
         });
     },
-    deleteUserById(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield users_repository_db_1.usersRepository.deleteUserById(id);
-        });
-    },
+    // req.user in bearerAuthMiddleware
     findUserById(userId) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield users_repository_db_1.usersRepository.findUserById(userId);

@@ -23,14 +23,14 @@ exports.usersQueryRepository = {
     getAllUsers(query) {
         return __awaiter(this, void 0, void 0, function* () {
             const { sortDirection = "desc", sortBy = "createdAt", pageNumber = 1, pageSize = 10, searchLoginTerm = null, searchEmailTerm = null } = query;
-            const sortDirectionNumber = sortDirection === "desc" ? -1 : 1;
-            const skippedUsersNumber = (+pageNumber - 1) * +pageSize;
+            const sortDirectionInt = sortDirection === "desc" ? -1 : 1;
+            const skippedUsersCount = (+pageNumber - 1) * +pageSize;
             if (searchLoginTerm && !searchEmailTerm) {
                 const countAllWithSearchLoginTerm = yield db_1.usersCollection.countDocuments({ login: { $regex: searchLoginTerm, $options: 'i' } });
                 const usersDb = yield db_1.usersCollection
                     .find({ login: { $regex: searchLoginTerm, $options: 'i' } })
-                    .sort({ [sortBy]: sortDirectionNumber })
-                    .skip(skippedUsersNumber)
+                    .sort({ [sortBy]: sortDirectionInt })
+                    .skip(skippedUsersCount)
                     .limit(+pageSize)
                     .toArray();
                 const usersView = usersDb.map(mapDbUserToUserViewModel);
@@ -46,8 +46,8 @@ exports.usersQueryRepository = {
                 const countAllWithSearchEmailTerm = yield db_1.usersCollection.countDocuments({ email: { $regex: searchEmailTerm, $options: 'i' } });
                 const usersDb = yield db_1.usersCollection
                     .find({ email: { $regex: searchEmailTerm, $options: 'i' } })
-                    .sort({ [sortBy]: sortDirectionNumber })
-                    .skip(skippedUsersNumber)
+                    .sort({ [sortBy]: sortDirectionInt })
+                    .skip(skippedUsersCount)
                     .limit(+pageSize)
                     .toArray();
                 const usersView = usersDb.map(mapDbUserToUserViewModel);
@@ -63,8 +63,8 @@ exports.usersQueryRepository = {
                 const countAllWithBothTerms = yield db_1.usersCollection.countDocuments({ $or: [{ email: { $regex: searchEmailTerm, $options: 'i' } }, { login: { $regex: searchLoginTerm, $options: 'i' } }] });
                 const usersDb = yield db_1.usersCollection
                     .find({ $or: [{ email: { $regex: searchEmailTerm, $options: 'i' } }, { login: { $regex: searchLoginTerm, $options: 'i' } }] })
-                    .sort({ [sortBy]: sortDirectionNumber })
-                    .skip(skippedUsersNumber)
+                    .sort({ [sortBy]: sortDirectionInt })
+                    .skip(skippedUsersCount)
                     .limit(+pageSize)
                     .toArray();
                 const usersView = usersDb.map(mapDbUserToUserViewModel);
@@ -79,8 +79,8 @@ exports.usersQueryRepository = {
             const countAll = yield db_1.usersCollection.countDocuments();
             const usersDb = yield db_1.usersCollection
                 .find({})
-                .sort({ [sortBy]: sortDirectionNumber })
-                .skip(skippedUsersNumber)
+                .sort({ [sortBy]: sortDirectionInt })
+                .skip(skippedUsersCount)
                 .limit(+pageSize)
                 .toArray();
             const usersView = usersDb.map(mapDbUserToUserViewModel);
