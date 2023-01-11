@@ -1,5 +1,10 @@
 import {usersCollection} from "./db";
-import {userDbType, userViewModel, paginatedUsersViewModel, paginationQuerys} from "../models/models";
+import {
+    userDbType,
+    userViewModel,
+    paginationQuerys,
+    paginatedViewModel
+} from "../models/models";
 
 function mapDbUserToUserViewModel (user: userDbType): userViewModel {
     return  {
@@ -14,7 +19,7 @@ function mapDbUserToUserViewModel (user: userDbType): userViewModel {
 export const usersQueryRepository = {
 
 
-    async getAllUsers(query: paginationQuerys): Promise<paginatedUsersViewModel> {
+    async getAllUsers(query: paginationQuerys): Promise<paginatedViewModel<userViewModel[]>> {
 
         const {sortDirection = "desc", sortBy = "createdAt", pageNumber = 1, pageSize = 10, searchLoginTerm = null, searchEmailTerm = null} = query
         const sortDirectionInt: 1 | -1 = sortDirection === "desc" ? -1 : 1;

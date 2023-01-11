@@ -15,9 +15,14 @@ import {
 import {postsQueryRepository} from "../repositories/posts-query-repository";
 
 import {
-    paginatedCommentsViewModel, commentViewModel,
-    createCommentInputModel, paramsIdModel,
-    paginatedPostsViewModel, postViewModel, updatePostInputModel, createPostInputModelWithBlogId, paginationQuerys
+    commentViewModel,
+    createCommentInputModel,
+    paramsIdModel,
+    postViewModel,
+    updatePostInputModel,
+    createPostInputModelWithBlogId,
+    paginationQuerys,
+    paginatedViewModel
 } from "../models/models";
 import {commentsService} from "../domain/comments-service";
 import {commentsQueryRepository} from "../repositories/comments/comments-query-repository";
@@ -28,9 +33,9 @@ export const postsRouter = Router({})
 
 
 
-postsRouter.get('/', async (req: RequestWithQuery<paginationQuerys>, res: Response<paginatedPostsViewModel>) => {
+postsRouter.get('/', async (req: RequestWithQuery<paginationQuerys>, res: Response<paginatedViewModel<postViewModel[]>>) => {
 
-    const returnedPosts: paginatedPostsViewModel = await postsQueryRepository.getAllPosts(req.query)
+    const returnedPosts: paginatedViewModel<postViewModel[]> = await postsQueryRepository.getAllPosts(req.query)
     res.status(200).send(returnedPosts)
 
 })
@@ -127,7 +132,7 @@ postsRouter.get('/:id/comments',
         return
     }
 
-    const returnedComments: paginatedCommentsViewModel = await commentsQueryRepository.getAllCommentsForPost(req.query, req.params.id)
+    const returnedComments: paginatedViewModel<commentViewModel[]> = await commentsQueryRepository.getAllCommentsForPost(req.query, req.params.id)
     res.send(returnedComments)
 
     })

@@ -14,15 +14,13 @@ import {blogsQueryRepository} from "../repositories/blogs-query-repository";
 import {postsService} from "../domain/posts-service";
 import {postsQueryRepository} from "../repositories/posts-query-repository";
 import {
-    paginatedBlogsViewModel,
     blogViewModel,
     createBlogInputModel,
     paginationQuerys,
     paramsIdModel,
-    paginatedPostsViewModel,
     postViewModel,
     updateBlogInputModel,
-    createPostInputModel
+    createPostInputModel, paginatedViewModel
 } from "../models/models";
 import {basicAuthMiddleware} from "../middlewares/auth-middlewares";
 
@@ -32,9 +30,9 @@ export const blogsRouter = Router({})
 
 
 blogsRouter.get('/',
-    async (req: RequestWithQuery<paginationQuerys>, res: Response<paginatedBlogsViewModel>) => {
+    async (req: RequestWithQuery<paginationQuerys>, res: Response<paginatedViewModel<blogViewModel[]>>) => {
 
-    const returnedBlogs: paginatedBlogsViewModel = await blogsQueryRepository.getAllBlogs(req.query)
+    const returnedBlogs: paginatedViewModel<blogViewModel[]> = await blogsQueryRepository.getAllBlogs(req.query)
 
     res.send(returnedBlogs)
 })
@@ -57,7 +55,7 @@ blogsRouter.get('/:id/posts',
     if (!blog) {
         return res.send(404)
     }
-    const foundPosts: paginatedPostsViewModel = await postsQueryRepository.findPostsForBlog(req.params.id, req.query)
+    const foundPosts: paginatedViewModel<postViewModel[]> = await postsQueryRepository.findPostsForBlog(req.params.id, req.query)
     res.send(foundPosts)
 
     })

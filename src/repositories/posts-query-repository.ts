@@ -3,8 +3,7 @@ import {ObjectId} from "mongodb";
 import {
     paginationQuerys,
     postDbModel,
-    paginatedPostsViewModel,
-    postViewModel,
+    postViewModel, paginatedViewModel,
 } from "../models/models";
 
 function postsMapperToPostType (post: postDbModel): postViewModel {
@@ -23,7 +22,7 @@ function postsMapperToPostType (post: postDbModel): postViewModel {
 
 export const postsQueryRepository = {
 
-    async getAllPosts (query: paginationQuerys): Promise<paginatedPostsViewModel> {
+    async getAllPosts (query: paginationQuerys): Promise<paginatedViewModel<postViewModel[]>> {
         const {sortDirection = "desc", sortBy = "createdAt",pageNumber = 1,pageSize = 10} = query
 
         const sortDirectionNumber: 1 | -1 = sortDirection === "desc" ? -1 : 1;
@@ -46,7 +45,7 @@ export const postsQueryRepository = {
         }
     },
 
-    async findPostsForBlog (blogId: string, query: paginationQuerys): Promise<paginatedPostsViewModel> {
+    async findPostsForBlog (blogId: string, query: paginationQuerys): Promise< paginatedViewModel<postViewModel[]> > {
         const {sortDirection = "desc", sortBy = "createdAt",pageNumber = 1,pageSize = 10} = query
 
         const sortDirectionNumber: 1 | -1 = sortDirection === "desc" ? -1 : 1;

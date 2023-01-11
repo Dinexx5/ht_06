@@ -1,6 +1,6 @@
 import {
-    commentDbType, paginatedCommentsViewModel,
-    commentType, commentViewModel, paginationQuerys
+    commentDbType, commentType, commentViewModel,
+    paginationQuerys, paginatedViewModel
 } from "../../models/models";
 import {commentsCollection} from "../db";
 import {ObjectId} from "mongodb";
@@ -18,7 +18,7 @@ function commentsMapperToCommentType (comment: commentDbType): commentType {
 
 export const commentsQueryRepository = {
 
-    async getAllCommentsForPost(query: paginationQuerys, postId: string): Promise<paginatedCommentsViewModel> {
+    async getAllCommentsForPost(query: paginationQuerys, postId: string): Promise<paginatedViewModel<commentViewModel[]>> {
 
         const {sortDirection = "desc", sortBy = "createdAt", pageNumber = 1, pageSize = 10} = query
         const sortDirectionNumber: 1 | -1 = sortDirection === "desc" ? -1 : 1;

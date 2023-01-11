@@ -2,9 +2,8 @@ import {blogsCollection} from "./db";
 import {ObjectId} from "mongodb";
 import {
     blogDbModel,
-    paginatedBlogsViewModel,
     blogViewModel,
-    paginationQuerys
+    paginationQuerys, paginatedViewModel
 } from "../models/models";
 
 function mapFoundBlogToBlogViewModel (blog: blogDbModel): blogViewModel {
@@ -21,7 +20,7 @@ function mapFoundBlogToBlogViewModel (blog: blogDbModel): blogViewModel {
 export const blogsQueryRepository = {
 
 
-    async getAllBlogs(query: paginationQuerys): Promise<paginatedBlogsViewModel> {
+    async getAllBlogs(query: paginationQuerys): Promise<paginatedViewModel<blogViewModel[]>> {
 
         const {sortDirection = "desc", sortBy = "createdAt", pageNumber = 1, pageSize = 10, searchNameTerm = null} = query
         const sortDirectionInt: 1 | -1 = sortDirection === "desc" ? -1 : 1;

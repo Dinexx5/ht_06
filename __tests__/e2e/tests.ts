@@ -1,6 +1,6 @@
 import request from 'supertest'
 import {app} from "../../src/appconfig";
-import {paginatedBlogsViewModel, createBlogInputModel} from "../../src/models/models";
+import {createBlogInputModel} from "../../src/models/models";
 
 describe('/blogs', () => {
     beforeAll(async () => {

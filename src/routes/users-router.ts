@@ -10,7 +10,7 @@ import {
     createUserInputModel, paginationQuerys,
     paramsIdModel,
     userViewModel,
-    paginatedUsersViewModel
+    paginatedViewModel
 } from "../models/models";
 
 import {usersService} from "../domain/users-service";
@@ -24,11 +24,10 @@ export const usersRouter = Router({})
 
 usersRouter.get('/',
     basicAuthMiddleware,
-    async (req: RequestWithQuery<paginationQuerys>, res: Response<paginatedUsersViewModel>) => {
+    async (req: RequestWithQuery<paginationQuerys>, res: Response< paginatedViewModel<userViewModel[]> >) => {
 
-    const returnedUsers: paginatedUsersViewModel = await usersQueryRepository.getAllUsers(req.query)
+    const returnedUsers: paginatedViewModel<userViewModel[]> = await usersQueryRepository.getAllUsers(req.query)
     res.send(returnedUsers)
-
 
 })
 
